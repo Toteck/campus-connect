@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
+import Course from './Course'
 
 export default class Class extends BaseModel {
   @column({ isPrimary: true })
@@ -9,18 +10,21 @@ export default class Class extends BaseModel {
   public name: string
 
   @column()
-  public year: number
+  public year: string
 
   @column()
-  public period: number
+  public period: string
 
   @column()
   public shift: string
 
-  // @hasMany(() => LinkToken, {
-  //   foreignKey: 'userId',
-  // })
-  // public tokens: HasMany<typeof LinkToken>
+  @column({ columnName: 'course_id' })
+  public courseId: number
+
+  @belongsTo(() => Course, {
+    foreignKey: 'courseId',
+  })
+  public courseClass: BelongsTo<typeof Course>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

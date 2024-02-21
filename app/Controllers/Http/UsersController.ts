@@ -7,6 +7,7 @@ export default class UsersController {
     const userPayload = await request.validate(CreateUserValidator)
 
     const user = await User.create(userPayload)
+
     return response.created({ user })
   }
 }

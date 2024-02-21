@@ -25,3 +25,6 @@ Route.post('/users', 'UsersController.store')
 
 // Course
 Route.post('/course', 'CoursesController.store')
+
+// Classes
+Route.post('/classes', 'ClassesController.store')
