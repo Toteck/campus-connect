@@ -7,11 +7,12 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
 
-      table.string('title', 255).notNullable()
+      table.string('title', 255).notNullable().unique()
       table.text('description').notNullable()
       table.dateTime('date').notNullable()
       table.enum('category', ['notícia', 'edital', 'evento', 'reunião'] as const).notNullable()
       table.string('thumbnail', 255).nullable()
+      table.string('anexo').nullable()
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
     })

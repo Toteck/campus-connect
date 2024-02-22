@@ -20,6 +20,9 @@ export default class Event extends BaseModel {
   @column()
   public thumbnail: string | null
 
+  @column()
+  public anexo: string | null
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 
