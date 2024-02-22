@@ -3,6 +3,7 @@ import CreateEventValidator from 'App/Validators/CreateEventValidator'
 import Event from 'App/Models/Event'
 import { DateTime } from 'luxon'
 import BadRequestException from 'App/Exceptions/BadRequestException'
+import UpdateEventValidator from 'App/Validators/UpdateEventValidator'
 
 export default class EventsController {
   public async store({ response, request }: HttpContextContract) {
@@ -31,5 +32,31 @@ export default class EventsController {
     }
 
     return response.created({ event: responseData2 })
+  }
+
+  public async update({ request, response }: HttpContextContract) {
+    // ID para encontrar o evento
+    const id = request.param('id')
+
+    // Informações para atualizar o evento
+    const payload = request.all()
+
+    // Encontramos o evento pelo ID
+    const event = await Event.findOrFail(id)
+
+    // Verifica se há outro evento com o mesmo título
+    const existingEvent = await Event.query()
+      .where('title', payload.title)
+      .whereNot('id', id)
+      .first()
+
+    if (existingEvent) {
+      throw new BadRequestException('Title is already being used by another event', 409)
+    }
+
+    // Realiza a atualização do evento
+    const updatedEvent = await event.merge(payload).save()
+
+    return response.ok({ event: updatedEvent })
   }
 }
