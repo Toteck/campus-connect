@@ -79,6 +79,7 @@ test.group('User', (group) => {
     response.assertStatus(201)
     response.assertBodyContains({ user: expected })
     assert.notExists(response.body().user.password, 'Password defined')
+    console.log(response.body().user)
   })
 
   test('it should try create an invalid profile', async ({ client, assert }) => {
@@ -91,8 +92,7 @@ test.group('User', (group) => {
       photo: 'https://i.pinimg.com/564x/eb/87/89/eb878994e94c2cfe7575a02a82b487d6.jpg',
     }
     const response = await client.post('/users').json(userPayload)
-
-    const { password, photo, ...expected } = userPayload
+    console.log(response.body())
     const body = response.body()
     response.assertStatus(422)
     assert.exists(body.message)
