@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
+import EventFactory from 'Database/factories/EventFactory'
 
 test.group('Events', (group) => {
   group.each.setup(async () => {
@@ -119,6 +120,27 @@ test.group('Events', (group) => {
   })
 
   // Implementação do teste para tentar atualizar um evento
+  test('it should update an event', async ({ client, assert }) => {
+    const event = await EventFactory.create()
+
+    const eventPayload = {
+      title: 'test',
+      description: 'test',
+      date: '2024-02-01',
+      category: 'edital',
+    }
+
+    const response = await client.patch(`/events/${event.id}`).json(eventPayload)
+
+    const body = response.body()
+
+    response.assertStatus(200)
+    assert.exists(body.event, 'Event undefined')
+    assert.equal(body.event.title, eventPayload.title)
+    assert.equal(body.event.description, eventPayload.description)
+    assert.equal(body.event.date, eventPayload.date)
+    assert.equal(body.event.category, eventPayload.category)
+  })
 
   // Implementação do teste para tentar atualizar um evento com outro título já existente em outro evento.
 })

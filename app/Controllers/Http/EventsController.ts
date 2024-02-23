@@ -3,7 +3,6 @@ import CreateEventValidator from 'App/Validators/CreateEventValidator'
 import Event from 'App/Models/Event'
 import { DateTime } from 'luxon'
 import BadRequestException from 'App/Exceptions/BadRequestException'
-import UpdateEventValidator from 'App/Validators/UpdateEventValidator'
 
 export default class EventsController {
   public async store({ response, request }: HttpContextContract) {
