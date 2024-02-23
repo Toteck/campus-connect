@@ -143,4 +143,32 @@ test.group('Events', (group) => {
   })
 
   // Implementação do teste para tentar atualizar um evento com outro título já existente em outro evento.
+
+  test('should try to update an event with an already existing title in another event', async ({
+    client,
+    assert,
+  }) => {
+    const event = await EventFactory.create()
+    const event2 = await EventFactory.create()
+
+    // Iremos tentar atualizar o evento 1 com o título do evento 2.
+    // Deve ocorrer um erro informando que o título está sendo utilizado por outro evento!
+    const eventPayload = {
+      title: event2.title,
+      description: 'test',
+      date: '2024-02-01',
+      category: 'edital',
+    }
+
+    const response = await client.patch(`/events/${event.id}`).json(eventPayload)
+
+    const body = response.body()
+
+    response.assertStatus(409)
+    assert.exists(body.message)
+    assert.exists(body.code)
+    assert.exists(body.status)
+    assert.equal(body.code, 'BAD_REQUEST')
+    assert.equal(body.status, 409)
+  })
 })
