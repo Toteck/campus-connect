@@ -171,4 +171,17 @@ test.group('Events', (group) => {
     assert.equal(body.code, 'BAD_REQUEST')
     assert.equal(body.status, 409)
   })
+
+  // Retorna todos os eventos
+  test('deve retornar todos os eventos', async ({ client, assert }) => {
+    for (let i = 0; i < 3; i++) {
+      await EventFactory.create()
+    }
+
+    const response = await client.get('/events')
+
+    response.assertStatus(200)
+
+    console.log(response.body())
+  })
 })

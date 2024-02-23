@@ -58,4 +58,19 @@ export default class EventsController {
 
     return response.ok({ event: updatedEvent })
   }
+
+  public async index({ request, response }: HttpContextContract) {
+    const events = await Event.query().select([
+      'title',
+      'description',
+      'date',
+      'category',
+      'thumbnail',
+      'anexo',
+    ])
+
+    //const events = await Event.query()
+
+    return response.ok({ events })
+  }
 }

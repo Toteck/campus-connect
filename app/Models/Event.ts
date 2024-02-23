@@ -11,7 +11,7 @@ export default class Event extends BaseModel {
   @column()
   public description: string
 
-  @column()
+  @column.dateTime()
   public date: DateTime
 
   @column()

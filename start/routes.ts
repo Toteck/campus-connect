@@ -32,3 +32,4 @@ Route.post('/classes', 'ClassesController.store')
 // Events
 Route.post('/events', 'EventsController.store')
 Route.patch('/events/:id', 'EventsController.update')
+Route.get('/events', 'EventsController.index')
