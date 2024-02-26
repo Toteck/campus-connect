@@ -230,4 +230,44 @@ test.group('Events', (group) => {
 
     console.log(response.body())
   })
+
+  test('it should return all events by category and title ou description', async ({
+    client,
+    assert,
+  }) => {
+    // Criação de um evento
+    const eventPayload = {
+      title:
+        'Edital nº 12 - Processo Seletivo Simplificado para Monitoria nos Cursos de Graduação - IFMA TIMON',
+      description: 'teste',
+      date: '2024-02-01',
+      category: 'edital',
+      thumbnail: 'https://portal.ifma.edu.br/wp-content/uploads/2024/02/CERTEC-Parceria-EBC-5.jpg',
+      anexo:
+        'https://portal.ifma.edu.br/concursos-e-seletivos/?d=KyMzdWRdMEtRIkMmUENcRX5oc0B6RHxGZFdEQUNHVXNTRVBBUkFET1JASUZNQTAyMTE1M2FlZmJiMzg1YWNhZjk2MzkzNTIxMWQ3M1t8XTAwMV9TZWxldGl2b19BbHVub19UTU5fMTJfMjAyNC5wZGY=',
+    }
+
+    const response = await client.post('/events').json(eventPayload)
+    response.assertStatus(201)
+
+    // Criação de outro evento
+    const eventPayload2 = {
+      title: 'Edital nº 10 - Processo Seletivo - IFMA TIMON',
+      description: 'qualquer coisa',
+      date: '2024-02-01',
+      category: 'edital',
+      thumbnail: 'https://portal.ifma.edu.br/wp-content/uploads/2024/02/CERTEC-Parceria-EBC-5.jpg',
+      anexo:
+        'https://portal.ifma.edu.br/concursos-e-seletivos/?d=KyMzdWRdMEtRIkMmUENcRX5oc0B6RHxGZFdEQUNHVXNTRVBBUkFET1JASUZNQTAyMTE1M2FlZmJiMzg1YWNhZjk2MzkzNTIxMWQ3M1t8XTAwMV9TZWxldGl2b19BbHVub19UTU5fMTJfMjAyNC5wZGY=',
+    }
+
+    const response2 = await client.post('/events').json(eventPayload2)
+    response2.assertStatus(201)
+
+    // Busca do evento pelo título "Monitoria" na categoria edital
+    const response3 = await client.get(`/events?category=edital&text=monitoria`)
+    response3.assertStatus(200)
+
+    console.log(response3.body())
+  })
 })

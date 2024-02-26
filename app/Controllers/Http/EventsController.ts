@@ -64,7 +64,7 @@ export default class EventsController {
 
     //const events = await this.all()
     //const events = await this.filterByCategory(category)
-    const events = await this.filterByText(text)
+    const events = await this.filterByCategoryAndText(category, text)
 
     const page = request.input('page', 1)
     const limit = request.input('limit', 5)
@@ -84,5 +84,21 @@ export default class EventsController {
     return Event.query()
       .where('title', 'LIKE', `%${text}%`)
       .orWhere('description', 'LIKE', `%${text}%`)
+  }
+
+  private filterByCategoryAndText(category: string, text: string) {
+    let query = Event.query()
+
+    if (category) {
+      query = query.where('category', category)
+    }
+
+    if (text) {
+      query = query.where((builder) => {
+        builder.where('title', 'LIKE', `%${text}%`).orWhere('description', 'LIKE', `%${text}%`)
+      })
+    }
+
+    return query
   }
 }
