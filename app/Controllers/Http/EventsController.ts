@@ -60,17 +60,22 @@ export default class EventsController {
   }
 
   public async index({ request, response }: HttpContextContract) {
-    const events = await Event.query().select([
-      'title',
-      'description',
-      'date',
-      'category',
-      'thumbnail',
-      'anexo',
-    ])
+    const { text, ['category']: category } = request.qs()
 
-    //const events = await Event.query()
+    //const events = this.all()
+    const events = await this.filterByCategory(category)
+
+    const page = request.input('page', 1)
+    const limit = request.input('limit', 5)
 
     return response.ok({ events })
+  }
+
+  private all() {
+    return Event.query()
+  }
+
+  private filterByCategory(category: string) {
+    return Event.query().where('category', category)
   }
 }
