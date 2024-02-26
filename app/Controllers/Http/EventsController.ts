@@ -62,8 +62,9 @@ export default class EventsController {
   public async index({ request, response }: HttpContextContract) {
     const { text, ['category']: category } = request.qs()
 
-    //const events = this.all()
-    const events = await this.filterByCategory(category)
+    //const events = await this.all()
+    //const events = await this.filterByCategory(category)
+    const events = await this.filterByText(text)
 
     const page = request.input('page', 1)
     const limit = request.input('limit', 5)
@@ -77,5 +78,11 @@ export default class EventsController {
 
   private filterByCategory(category: string) {
     return Event.query().where('category', category)
+  }
+
+  private filterByText(text: string) {
+    return Event.query()
+      .where('title', 'LIKE', `%${text}%`)
+      .orWhere('description', 'LIKE', `%${text}%`)
   }
 }
