@@ -17,20 +17,6 @@ export default class EventsController {
 
     const event = await Event.create(eventPayload)
 
-    // Formatando a data para o formato desejado
-    // const formattedDate = DateTime.fromISO(event.date.toString()).toFormat('yyyy-MM-dd')
-
-    // Criar um objeto contendo apenas as informações desejadas
-    // const responseData2 = {
-    //   title: event.title,
-    //   description: event.description,
-    //   date: formattedDate,
-    //   category: event.category,
-    //   thumbnail: event.thumbnail,
-    //   anexo: event.anexo,
-    // }
-
-    //return response.created({ event: responseData2 })
     return response.created({ event })
   }
 
@@ -74,6 +60,7 @@ export default class EventsController {
 
   public async destroy({ request, response }: HttpContextContract) {
     const id = request.param('id')
+    console.log('Evento selecionado: ', id)
 
     const group = await Event.findOrFail(id)
 

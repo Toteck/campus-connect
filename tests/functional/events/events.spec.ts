@@ -301,4 +301,16 @@ test.group('Events', (group) => {
 
     assert.isEmpty(emptyEvent)
   })
+
+  test('it should return 404 when providing an unexisting group for deletion', async ({
+    client,
+    assert,
+  }) => {
+    const response = await client.delete(`/events/1`)
+    response.assertStatus(404)
+
+    console.log(response.body())
+    assert.equal(response.body().code, 'BAD_REQUEST')
+    assert.equal(response.body().status, '404')
+  })
 })
