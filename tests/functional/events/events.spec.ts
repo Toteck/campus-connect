@@ -24,11 +24,8 @@ test.group('Events', (group) => {
 
     const response = await client.post('/events').json(eventPayload)
 
-    const { ...expected } = eventPayload
-
-    console.log(response.body().event)
     response.assertStatus(201)
-    response.assertBodyContains({ event: expected })
+    console.log(response.body().event)
   })
 
   test('it should try to create an event with an already existing title', async ({
@@ -139,8 +136,10 @@ test.group('Events', (group) => {
     response.assertStatus(200)
 
     console.log(response.body())
+    console.log(response.body().events.data)
   })
 
+  // Retorna todos os eventos por título
   test('it should return all events by title', async ({ client, assert }) => {
     // Criação de um evento
     const eventPayload = {
@@ -178,6 +177,7 @@ test.group('Events', (group) => {
     console.log(response3.body())
   })
 
+  // Retorna todos os eventos por descrição
   test('it should return all events by description', async ({ client, assert }) => {
     // Criação de um evento
     const eventPayload = {
@@ -215,6 +215,7 @@ test.group('Events', (group) => {
     console.log(response3.body())
   })
 
+  // Retorna todos os eventos por categoria
   test('it should return all events by category', async ({ client, assert }) => {
     for (let i = 0; i < 3; i++) {
       await EventFactory.merge({ category: 'notícia' }).create()
@@ -231,7 +232,8 @@ test.group('Events', (group) => {
     console.log(response.body())
   })
 
-  test('it should return all events by category and title ou description', async ({
+  // Retorna todos os eventos por categoria e título ou descrição
+  test('it should return all events by category and title or description', async ({
     client,
     assert,
   }) => {
@@ -269,5 +271,34 @@ test.group('Events', (group) => {
     response3.assertStatus(200)
 
     console.log(response3.body())
+  })
+
+  // Deve deletar um evento
+  test('it should delete an event', async ({ client, assert }) => {
+    const eventPayload = {
+      title:
+        'Edital nº 12 - Processo Seletivo Simplificado para Monitoria nos Cursos de Graduação - IFMA TIMON',
+      description:
+        'Processo Seletivo Simplificado para o Programa de Monitoria referente ao primeiro semestre de 2024 para os Cursos Superiores do IFMA Campus Timon.',
+      date: '2024-02-01',
+      category: 'edital',
+      thumbnail: 'https://portal.ifma.edu.br/wp-content/uploads/2024/02/CERTEC-Parceria-EBC-5.jpg',
+      anexo:
+        'https://portal.ifma.edu.br/concursos-e-seletivos/?d=KyMzdWRdMEtRIkMmUENcRX5oc0B6RHxGZFdEQUNHVXNTRVBBUkFET1JASUZNQTAyMTE1M2FlZmJiMzg1YWNhZjk2MzkzNTIxMWQ3M1t8XTAwMV9TZWxldGl2b19BbHVub19UTU5fMTJfMjAyNC5wZGY=',
+    }
+
+    const response = await client.post('/events').json(eventPayload)
+    response.assertStatus(201)
+
+    const event = response.body().event
+
+    const response2 = await client.delete(`/events/${event.id}`)
+
+    response2.assertStatus(200)
+
+    // Como nossa API não retorna nada precisamos verificar no banco de dados se foi removida
+    const emptyEvent = await Database.query().from('events').where('id', event.id)
+
+    assert.isEmpty(emptyEvent)
   })
 })

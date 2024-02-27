@@ -18,19 +18,20 @@ export default class EventsController {
     const event = await Event.create(eventPayload)
 
     // Formatando a data para o formato desejado
-    const formattedDate = DateTime.fromISO(event.date.toString()).toFormat('yyyy-MM-dd')
+    // const formattedDate = DateTime.fromISO(event.date.toString()).toFormat('yyyy-MM-dd')
 
     // Criar um objeto contendo apenas as informações desejadas
-    const responseData2 = {
-      title: event.title,
-      description: event.description,
-      date: formattedDate,
-      category: event.category,
-      thumbnail: event.thumbnail,
-      anexo: event.anexo,
-    }
+    // const responseData2 = {
+    //   title: event.title,
+    //   description: event.description,
+    //   date: formattedDate,
+    //   category: event.category,
+    //   thumbnail: event.thumbnail,
+    //   anexo: event.anexo,
+    // }
 
-    return response.created({ event: responseData2 })
+    //return response.created({ event: responseData2 })
+    return response.created({ event })
   }
 
   public async update({ request, response }: HttpContextContract) {
@@ -62,14 +63,30 @@ export default class EventsController {
   public async index({ request, response }: HttpContextContract) {
     const { text, ['category']: category } = request.qs()
 
-    //const events = await this.all()
-    //const events = await this.filterByCategory(category)
-    const events = await this.filterByCategoryAndText(category, text)
-
     const page = request.input('page', 1)
     const limit = request.input('limit', 5)
 
+    const eventsQuery = this.filterByQueryString(category, text) // Quando pegamos esse resultado sem o await está sendo retornado uma query de busca
+    const events = await eventsQuery.paginate(page, limit)
+
     return response.ok({ events })
+  }
+
+  public async destroy({ request, response }: HttpContextContract) {
+    const id = request.param('id')
+
+    const group = await Event.findOrFail(id)
+
+    await group.delete()
+
+    return response.ok({})
+  }
+
+  private filterByQueryString(category: string, text: string) {
+    if (category && text) return this.filterByCategoryAndText(category, text)
+    else if (category) return this.filterByCategory(category)
+    else if (text) return this.filterByText(text)
+    else return this.all()
   }
 
   private all() {
