@@ -12,7 +12,7 @@ export default class EventsController {
     const eventByTitle = await Event.findBy('title', eventPayload.title)
 
     if (eventByTitle) {
-      throw new BadRequestException('title is already being used by another event', 409)
+      throw new BadRequestException('Title is already being used by another event', 409)
     }
 
     const event = await Event.create(eventPayload)

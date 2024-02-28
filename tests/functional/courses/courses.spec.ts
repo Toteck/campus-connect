@@ -20,6 +20,28 @@ test.group('Group', (group) => {
     response.assertBodyContains({ course: expected })
   })
 
+  test('Try to create a course with a name already used by another course', async ({
+    client,
+    assert,
+  }) => {
+    const coursePayload = {
+      degree: 'médio técnico',
+      name: 'Informática',
+    }
+
+    const response = await client.post('/course').json(coursePayload)
+    response.assertStatus(201)
+
+    const response2 = await client.post('/course').json(coursePayload)
+    response2.assertStatus(409)
+    const body = response2.body()
+    assert.exists(body.message)
+    assert.exists(body.code)
+    assert.exists(body.status)
+    assert.equal(body.code, 'BAD_REQUEST')
+    assert.equal(body.status, 409)
+  })
+
   test('should return 422 when required course data is not provided', async ({
     client,
     assert,
