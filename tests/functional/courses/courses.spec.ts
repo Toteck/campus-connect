@@ -206,14 +206,40 @@ test.group('Group', (group) => {
     console.log(response2.body().course)
   })
 
+  test('should try to update a course with the name being used by another course', async ({
+    client,
+    assert,
+  }) => {
+    const sistemasParaInternet = {
+      degree: 'superior',
+      name: 'Sistemas de Internet',
+    }
+    const biologia = {
+      degree: 'superior',
+      name: 'Biologia',
+    }
+
+    const response = await client.post('/course').json(sistemasParaInternet)
+    response.assertStatus(201)
+
+    const response2 = await client.post('/course').json(biologia)
+    response2.assertStatus(201)
+
+    const response3 = await client
+      .patch(`/course/1`)
+      .json({ ...sistemasParaInternet, name: 'Biologia' })
+
+    console.log(response3.body())
+  })
+
   test('it should try update a course with invalid id', async ({ client, assert }) => {
-    const response2 = await client.patch(`/course/1}`).json({})
+    const response = await client.patch(`/course/1}`).json({})
 
-    response2.assertStatus(404)
+    response.assertStatus(404)
 
-    assert.exists(response2.body().message)
-    assert.equal(response2.body().code, 'BAD_REQUEST')
-    assert.equal(response2.body().status, 404)
+    assert.exists(response.body().message)
+    assert.equal(response.body().code, 'BAD_REQUEST')
+    assert.equal(response.body().status, 404)
   })
 
   test('should return 422 when required course data is not provided', async ({
