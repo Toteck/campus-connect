@@ -26,6 +26,7 @@ Route.post('/users', 'UsersController.store')
 // Course
 Route.post('/course', 'CoursesController.store')
 Route.get('/course/:id', 'CoursesController.show')
+Route.get('/course/', 'CoursesController.index')
 
 // Classes
 Route.post('/classes', 'ClassesController.store')
