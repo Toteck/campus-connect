@@ -4,6 +4,14 @@ import Course from 'App/Models/Course'
 import CreateCourseValidator from 'App/Validators/CreateCourseValidator'
 
 export default class CoursesController {
+  public async show({ request, response }) {
+    const id = request.param('id')
+
+    const course = await Course.findOrFail(id)
+
+    return response.ok({ course })
+  }
+
   public async store({ response, request }: HttpContextContract) {
     // Validação dos dados passados na requisição
     const coursePayload = await request.validate(CreateCourseValidator)

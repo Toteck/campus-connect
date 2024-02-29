@@ -42,6 +42,20 @@ test.group('Group', (group) => {
     assert.equal(body.status, 409)
   })
 
+  test('it should return a course', async ({ client, assert }) => {
+    const coursePayload = {
+      degree: 'médio técnico',
+      name: 'Informática',
+    }
+
+    const response = await client.post('/course').json(coursePayload)
+    response.assertStatus(201)
+
+    const response2 = await client.get('/course/1')
+
+    console.log(response2.body().course)
+  })
+
   test('should return 422 when required course data is not provided', async ({
     client,
     assert,

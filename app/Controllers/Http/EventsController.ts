@@ -60,7 +60,6 @@ export default class EventsController {
 
   public async destroy({ request, response }: HttpContextContract) {
     const id = request.param('id')
-    console.log('Evento selecionado: ', id)
 
     const group = await Event.findOrFail(id)
 
