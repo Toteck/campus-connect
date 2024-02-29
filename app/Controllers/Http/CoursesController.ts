@@ -65,6 +65,13 @@ export default class CoursesController {
     return response.ok({ course: updatedCourse })
   }
 
+  public async destroy({ response, request }: HttpContextContract) {
+    const id = request.param('id')
+    const curso = await Course.findOrFail(id)
+    await curso.delete()
+    return response.ok({})
+  }
+
   private filterByQueryString(degree: string, name: string) {
     if (degree && name) return this.filterByNameAndDegree(degree, name)
     else if (degree) return this.filterByDegree(degree)

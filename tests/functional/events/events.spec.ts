@@ -96,7 +96,6 @@ test.group('Events', (group) => {
   })
 
   // Implementação do teste para tentar atualizar um evento com outro título já existente em outro evento.
-
   test('should try to update an event with an already existing title in another event', async ({
     client,
     assert,

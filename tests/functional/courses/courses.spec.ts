@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { test } from '@japa/runner'
 import Database from '@ioc:Adonis/Lucid/Database'
+import { assert } from '@japa/preset-adonis'
 
 test.group('Group', (group) => {
   group.each.setup(async () => {
@@ -206,6 +207,7 @@ test.group('Group', (group) => {
     console.log(response2.body().course)
   })
 
+  // Tenta atualizar o nome de curso para outro que já está sendo usado por outro curso
   test('should try to update a course with the name being used by another course', async ({
     client,
     assert,
@@ -251,5 +253,32 @@ test.group('Group', (group) => {
 
     assert.equal(response.body().code, 'BAD_REQUEST')
     assert.equal(response.body().status, 422)
+  })
+
+  test('it should delete a course', async ({ client, assert }) => {
+    const coursePayload = {
+      degree: 'médio técnico',
+      name: 'Informática',
+    }
+
+    const response = await client.post('/course').json(coursePayload)
+    response.assertStatus(201)
+    const curso = response.body().course
+
+    const response2 = await client.delete(`/course/${curso.id}`)
+    response2.assertStatus(200)
+
+    // verificando no banco de dados se o curso realmente deletado
+    const emptyCourse = await Database.query().from('courses').where('id', curso.id)
+
+    assert.isEmpty(emptyCourse)
+  })
+
+  test('it should try delete a course with invalid id', async ({ client, assert }) => {
+    const response = await client.delete(`/course/1`)
+    response.assertStatus(404)
+
+    assert.equal(response.body().code, 'BAD_REQUEST')
+    assert.equal(response.body().status, 404)
   })
 })

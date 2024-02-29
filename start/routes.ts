@@ -28,6 +28,7 @@ Route.post('/course', 'CoursesController.store')
 Route.get('/course/:id', 'CoursesController.show')
 Route.get('/course', 'CoursesController.index')
 Route.patch('/course/:id', 'CoursesController.update')
+Route.delete('/course/:id', 'CoursesController.destroy')
 
 // Classes
 Route.post('/classes', 'ClassesController.store')
