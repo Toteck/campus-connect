@@ -89,7 +89,7 @@ test.group('Group', (group) => {
 
     const response4 = await client.get('/course')
 
-    console.log(response4.body().data)
+    console.log(response4.body().courses.data)
   })
 
   test('should return 422 when required course data is not provided', async ({
