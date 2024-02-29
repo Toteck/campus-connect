@@ -182,6 +182,30 @@ test.group('Group', (group) => {
     console.log(response5.body().courses.data)
   })
 
+  test('it should update a course', async ({ client, assert }) => {
+    const biologia = {
+      degree: 'médio técnico',
+      name: 'Biologia',
+    }
+
+    const response = await client.post('/course').json(biologia)
+    response.assertStatus(201)
+
+    console.log(response.body().course)
+
+    const updatedBiologia = {
+      degree: 'superior',
+      name: 'Biologia',
+    }
+    const response2 = await client
+      .patch(`/course/${response.body().course.id}`)
+      .json(updatedBiologia)
+
+    response2.assertStatus(200)
+
+    console.log(response2.body().course)
+  })
+
   test('should return 422 when required course data is not provided', async ({
     client,
     assert,

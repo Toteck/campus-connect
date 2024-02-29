@@ -4,7 +4,7 @@ import Course from 'App/Models/Course'
 import CreateCourseValidator from 'App/Validators/CreateCourseValidator'
 
 export default class CoursesController {
-  public async index({ request, response }) {
+  public async index({ request, response }: HttpContextContract) {
     const { ['name']: name, ['degree']: degree } = request.qs()
 
     console.log(name, degree)
@@ -18,7 +18,7 @@ export default class CoursesController {
     return response.ok({ courses })
   }
 
-  public async show({ request, response }) {
+  public async show({ request, response }: HttpContextContract) {
     const id = request.param('id')
 
     const course = await Course.findOrFail(id)
@@ -44,6 +44,27 @@ export default class CoursesController {
     return response.created({ course })
   }
 
+  public async update({ response, request }: HttpContextContract) {
+    const id = request.param('id')
+
+    const payload = request.all()
+
+    const curso = await Course.findOrFail(id)
+
+    const existingCourse = await Course.query()
+      .where('name', payload.name)
+      .whereNot('id', id)
+      .first()
+
+    if (existingCourse) {
+      throw new BadRequestException('Name is already being used by another course', 409)
+    }
+
+    const updatedCourse = await curso.merge(payload).save()
+
+    return response.ok({ course: updatedCourse })
+  }
+
   private filterByQueryString(degree: string, name: string) {
     if (degree && name) return this.filterByNameAndDegree(degree, name)
     else if (degree) return this.filterByDegree(degree)
@@ -65,19 +86,5 @@ export default class CoursesController {
 
   private filterByNameAndDegree(degree: string, name: string) {
     return Course.query().where('degree', degree).andWhere('name', 'LIKE', `%${name}%`)
-
-    // if (degree) {
-    //   query = query.where('degree', degree)
-    // }
-
-    // console.log(query)
-
-    // if (name) {
-    //   query = query.where((builder) => {
-    //     builder.where('name', 'LIKE', `%${name}%`)
-    //   })
-    // }
-
-    //return query
   }
 }
