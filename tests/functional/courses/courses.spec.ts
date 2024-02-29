@@ -206,6 +206,16 @@ test.group('Group', (group) => {
     console.log(response2.body().course)
   })
 
+  test('it should try update a course with invalid id', async ({ client, assert }) => {
+    const response2 = await client.patch(`/course/1}`).json({})
+
+    response2.assertStatus(404)
+
+    assert.exists(response2.body().message)
+    assert.equal(response2.body().code, 'BAD_REQUEST')
+    assert.equal(response2.body().status, 404)
+  })
+
   test('should return 422 when required course data is not provided', async ({
     client,
     assert,
