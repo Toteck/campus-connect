@@ -92,6 +92,34 @@ test.group('Group', (group) => {
     console.log(response4.body().courses.data)
   })
 
+  // Retorna todos os cursos por nome
+  test('it should return all courses by name', async ({ client, assert }) => {
+    const informatica = {
+      degree: 'médio técnico',
+      name: 'Informática',
+    }
+    const edificacoes = {
+      degree: 'médio técnico',
+      name: 'edificações',
+    }
+    const administracao = {
+      degree: 'médio técnico',
+      name: 'administracão',
+    }
+
+    const response = await client.post('/course').json(informatica)
+    response.assertStatus(201)
+    const response2 = await client.post('/course').json(edificacoes)
+    response2.assertStatus(201)
+    const response3 = await client.post('/course').json(administracao)
+    response3.assertStatus(201)
+
+    const response4 = await client.get('/course?name=ica')
+    response4.assertStatus(200)
+
+    console.log(response4.body().courses.data)
+  })
+
   test('should return 422 when required course data is not provided', async ({
     client,
     assert,
