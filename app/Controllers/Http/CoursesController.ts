@@ -7,6 +7,8 @@ export default class CoursesController {
   public async index({ request, response }) {
     const { ['name']: name, ['degree']: degree } = request.qs()
 
+    console.log(name, degree)
+
     const page = request.input('page', 1)
     const limit = request.input('limit', 5)
 
@@ -61,19 +63,21 @@ export default class CoursesController {
     return Course.query().where('name', 'LIKE', `%${name}%`)
   }
 
-  private filterByNameAndDegree(name: string, degree: string) {
-    let query = Course.query()
+  private filterByNameAndDegree(degree: string, name: string) {
+    return Course.query().where('degree', degree).andWhere('name', 'LIKE', `%${name}%`)
 
-    if (degree) {
-      query = query.where('degree', degree)
-    }
+    // if (degree) {
+    //   query = query.where('degree', degree)
+    // }
 
-    if (name) {
-      query = query.where((builder) => {
-        builder.where('name', 'LIKE', `%${name}%`)
-      })
-    }
+    // console.log(query)
 
-    return query
+    // if (name) {
+    //   query = query.where((builder) => {
+    //     builder.where('name', 'LIKE', `%${name}%`)
+    //   })
+    // }
+
+    //return query
   }
 }

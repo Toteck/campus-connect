@@ -120,6 +120,68 @@ test.group('Group', (group) => {
     console.log(response4.body().courses.data)
   })
 
+  test('it should return all courses by degree', async ({ client, assert }) => {
+    const sistemasParaInternet = {
+      degree: 'superior',
+      name: 'Sistemas de Internet',
+    }
+    const biologia = {
+      degree: 'superior',
+      name: 'Biologia',
+    }
+    const administracao = {
+      degree: 'médio técnico',
+      name: 'administracão',
+    }
+
+    const response = await client.post('/course').json(sistemasParaInternet)
+    response.assertStatus(201)
+    const response2 = await client.post('/course').json(biologia)
+    response2.assertStatus(201)
+    const response3 = await client.post('/course').json(administracao)
+    response3.assertStatus(201)
+
+    const response4 = await client.get('/course?degree=médio técnico')
+    response4.assertStatus(200)
+
+    console.log(response4.body().courses.data)
+  })
+
+  test('it should return all courses by name and degree', async ({ client, assert }) => {
+    const sistemasParaInternet = {
+      degree: 'superior',
+      name: 'Sistemas de Internet',
+    }
+    const biologia = {
+      degree: 'superior',
+      name: 'Biologia',
+    }
+
+    const administracao = {
+      degree: 'médio técnico',
+      name: 'administracão',
+    }
+
+    const edificacoes = {
+      degree: 'médio técnico',
+      name: 'edificacões',
+    }
+
+    const response = await client.post('/course').json(sistemasParaInternet)
+    response.assertStatus(201)
+    const response2 = await client.post('/course').json(biologia)
+    response2.assertStatus(201)
+    const response3 = await client.post('/course').json(administracao)
+    response3.assertStatus(201)
+    const response4 = await client.post('/course').json(edificacoes)
+    response4.assertStatus(201)
+
+    const response5 = await client.get('/course?name=Internet&degree=superior')
+    response5.assertStatus(200)
+
+    console.log(response5.body().courses.data)
+  })
+
   test('should return 422 when required course data is not provided', async ({
     client,
     assert,
