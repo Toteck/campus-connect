@@ -1,7 +1,9 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import BadRequestException from 'App/Exceptions/BadRequestException'
 import Class from 'App/Models/Class'
+import Course from 'App/Models/Course'
 import CreateClassValidator from 'App/Validators/CreateClassValidator'
+import UpdateClassValidator from 'App/Validators/UpdateClassValidator'
 
 export default class ClassesController {
   public async index({ request, response }: HttpContextContract) {
@@ -42,6 +44,39 @@ export default class ClassesController {
     const classe = await Class.create(classPayload)
     await classe.load('courseClass')
     return response.created({ classe })
+  }
+
+  public async update({ request, response }: HttpContextContract) {
+    const id = request.param('id')
+
+    const classPayload = await request.validate(UpdateClassValidator)
+
+    //const classPayload = request.all()
+
+    const classe = await Class.findOrFail(id)
+
+    if (classPayload.courseId) {
+      // Verificar se o curso fornecido existe
+      await Course.findOrFail(classPayload.courseId)
+    }
+
+    // Verificar se a atualização resultará em uma duplicação de turma
+    const existingClass = await Class.query()
+      .where('name', classPayload.name ?? classe.name)
+      .where('year', classPayload.year ?? classe.year)
+      .where('period', classPayload.period ?? classe.period)
+      .where('shift', classPayload.shift ?? classe.shift)
+      .where('course_id', classPayload.courseId ?? classe.courseId)
+      .whereNot('id', id)
+      .first()
+
+    if (existingClass) {
+      throw new BadRequestException('There is already another class with this same data', 409)
+    }
+
+    const updatedClass = await classe.merge(classPayload).save()
+
+    return response.ok({ classe: updatedClass })
   }
 
   private filterByQueryString(name: string) {
