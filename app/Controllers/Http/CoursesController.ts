@@ -77,6 +77,18 @@ export default class CoursesController {
     else return this.all()
   }
 
+  public async classesByCourse({ request, response }: HttpContextContract) {
+    const courseId = request.param('id')
+
+    // Encontrar o curso pelo ID
+    const course = await Course.findOrFail(courseId)
+
+    // Carregar todas as turmas associadas a este curso
+    await course.load('classes')
+
+    return response.ok({ classes: course.classes })
+  }
+
   private all() {
     return Course.query()
   }

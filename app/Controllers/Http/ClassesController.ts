@@ -80,6 +80,13 @@ export default class ClassesController {
     return response.ok({ classe: updatedClass })
   }
 
+  public async destroy({ request, response }: HttpContextContract) {
+    const id = request.param('id')
+    const classe = await Class.findOrFail(id)
+    await classe.delete()
+    return response.ok({})
+  }
+
   private filterByQueryString(name: string) {
     if (name) return this.filterByName(name)
     else return this.all()

@@ -183,6 +183,9 @@ test.group('Group', (group) => {
     console.log(response5.body().courses.data)
   })
 
+  // it should return all class by course
+  test('it should return all class by course', async ({ client, assert }) => {})
+
   test('it should update a course', async ({ client, assert }) => {
     const biologia = {
       degree: 'médio técnico',
