@@ -32,6 +32,7 @@ Route.delete('/course/:id', 'CoursesController.destroy')
 
 // Classes
 Route.post('/classes', 'ClassesController.store')
+Route.get('/classes/:id', 'ClassesController.show')
 
 // Events
 Route.post('/events', 'EventsController.store')
