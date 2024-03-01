@@ -100,4 +100,55 @@ test.group('Classes', (group) => {
     assert.equal(response.body().code, 'BAD_REQUEST')
     assert.equal(response.body().status, 404)
   })
+
+  // Retorne todos as turmas
+  test('it should return all class', async ({ client, assert }) => {
+    // Para mim criar uma turma eu preciso criar um curso antes
+    const sistemasParaInternet = {
+      degree: 'superior',
+      name: 'Sistemas de Internet',
+    }
+
+    const biologia = {
+      degree: 'superior',
+      name: 'Biologia',
+    }
+
+    const response = await client.post('/course').json(sistemasParaInternet)
+    response.assertStatus(201)
+    const course = response.body().course
+
+    const response2 = await client.post('/course').json(biologia)
+    response.assertStatus(201)
+    const course2 = response2.body().course
+
+    // Criação da turma de Sistemas para Internet
+    const classPayload = {
+      name: 'Tec. em Sistemas de Internet',
+      year: '2022',
+      period: '2',
+      shift: 'Verspertino',
+      courseId: course.id,
+    }
+
+    // Criação da turma de Biologia
+    const classPayload2 = {
+      name: 'Licenciatura em Biologia',
+      year: '2024',
+      period: '1',
+      shift: 'Integral',
+      courseId: course2.id,
+    }
+
+    const response3 = await client.post('/classes').json(classPayload)
+    response3.assertStatus(201)
+
+    const response4 = await client.post('/classes').json(classPayload2)
+
+    response4.assertStatus(201)
+
+    const response5 = await client.get('/classes')
+
+    console.log(response5.body().classes.data)
+  })
 })

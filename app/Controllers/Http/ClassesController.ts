@@ -4,6 +4,18 @@ import Class from 'App/Models/Class'
 import CreateClassValidator from 'App/Validators/CreateClassValidator'
 
 export default class ClassesController {
+  public async index({ request, response }: HttpContextContract) {
+    const { ['name']: name } = request.qs()
+
+    const page = request.input('page', 1)
+    const limit = request.input('limit', 5)
+
+    const classByQuery = this.filterByQueryString(name)
+    const classes = await classByQuery.paginate(page, limit)
+
+    return response.ok({ classes })
+  }
+
   public async show({ request, response }: HttpContextContract) {
     const id = request.param('id')
     const classe = await Class.findOrFail(id)
@@ -30,5 +42,18 @@ export default class ClassesController {
     const classe = await Class.create(classPayload)
     await classe.load('courseClass')
     return response.created({ classe })
+  }
+
+  private filterByQueryString(name: string) {
+    if (name) return this.filterByName(name)
+    else return this.all()
+  }
+
+  private all() {
+    return Class.query()
+  }
+
+  private filterByName(name: string) {
+    return Class.query().where('name', 'LIKE', `%${name}%`)
   }
 }

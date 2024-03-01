@@ -7,8 +7,6 @@ export default class CoursesController {
   public async index({ request, response }: HttpContextContract) {
     const { ['name']: name, ['degree']: degree } = request.qs()
 
-    console.log(name, degree)
-
     const page = request.input('page', 1)
     const limit = request.input('limit', 5)
 
