@@ -92,4 +92,12 @@ test.group('Classes', (group) => {
 
     console.log(response3.body().classe)
   })
+
+  test('it should return a class with invalid id', async ({ client, assert }) => {
+    const response = await client.get(`/classes/1`)
+
+    assert.exists(response.body().message)
+    assert.equal(response.body().code, 'BAD_REQUEST')
+    assert.equal(response.body().status, 404)
+  })
 })
