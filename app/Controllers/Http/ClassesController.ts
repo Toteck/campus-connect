@@ -56,8 +56,9 @@ export default class ClassesController {
     const classe = await Class.findOrFail(id)
 
     if (classPayload.courseId) {
+      let courseUpdateId: number = classPayload.courseId
       // Verificar se o curso fornecido existe
-      await Course.findOrFail(classPayload.courseId)
+      await Course.findOrFail(courseUpdateId)
     }
 
     // Verificar se a atualização resultará em uma duplicação de turma
