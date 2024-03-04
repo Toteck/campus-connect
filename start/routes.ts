@@ -3,6 +3,10 @@ import Route from '@ioc:Adonis/Core/Route'
 // User
 Route.post('/users', 'UsersController.store')
 
+// Session
+Route.post('/sessions', 'SessionsController.store')
+Route.delete('/sessions', 'SessionsController.destroy')
+
 // Course
 Route.post('/course', 'CoursesController.store')
 Route.get('/course/:id', 'CoursesController.show')

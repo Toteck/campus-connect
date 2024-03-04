@@ -2,6 +2,7 @@ import { DateTime } from 'luxon'
 import { BaseModel, ManyToMany, beforeSave, column, manyToMany } from '@ioc:Adonis/Lucid/Orm'
 import Hash from '@ioc:Adonis/Core/Hash'
 import Class from './Class'
+import Event from './Event'
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -35,6 +36,11 @@ export default class User extends BaseModel {
     pivotTable: 'users_classes',
   })
   public classes: ManyToMany<typeof Class>
+
+  @manyToMany(() => Event, {
+    pivotTable: 'users_events',
+  })
+  public events: ManyToMany<typeof Event>
 
   @beforeSave()
   public static async hashPassword(user: User) {
