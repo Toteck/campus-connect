@@ -32,4 +32,22 @@ test.group('Session', (group) => {
     assert.equal(response.body().status, 400)
     assert.equal(response.body().message, 'Credenciais inválidas')
   })
+
+  test('it should return 200 when user signs out', async ({client}) => {
+    const plainPassword = 'test123456'
+
+    const {email } = await AdmFactory.merge({ password: plainPassword }).create()
+
+    // Fazendo o login
+    const response = await client.post('/sessions').json({ email, password: plainPassword })
+
+    // Pegamos o token
+    const apiToken = response.body().token
+
+    const response2 = await client.delete('/sessions').header('Authorization', `Bearer ${apiToken}`)
+    response2.assertStatus(200)
+
+    
+
+  })
 })
