@@ -33,10 +33,10 @@ test.group('Session', (group) => {
     assert.equal(response.body().message, 'Credenciais inválidas')
   })
 
-  test('it should return 200 when user signs out', async ({client}) => {
+  test('it should return 200 when user signs out', async ({ client }) => {
     const plainPassword = 'test123456'
 
-    const {email } = await AdmFactory.merge({ password: plainPassword }).create()
+    const { email } = await AdmFactory.merge({ password: plainPassword }).create()
 
     // Fazendo o login
     const response = await client.post('/sessions').json({ email, password: plainPassword })
@@ -44,10 +44,38 @@ test.group('Session', (group) => {
     // Pegamos o token
     const apiToken = response.body().token
 
-    const response2 = await client.delete('/sessions').header('Authorization', `Bearer ${apiToken}`)
+    const response2 = await client
+      .delete('/sessions')
+      .header('Authorization', `Bearer ${apiToken.token}`)
+    response2.assertStatus(200)
+  })
+
+  test('it should revoke token when user signs out', async ({ client, assert }) => {
+    const plainPassword = 'test123456'
+
+    const { email } = await AdmFactory.merge({ password: plainPassword }).create()
+
+    // Fazendo o login
+    const response = await client.post('/sessions').json({ email, password: plainPassword })
+    response.assertStatus(201)
+
+    // Pegamos o token
+
+    const apiToken = response.body().token
+
+    const tokenBeforeSignOut = await Database.query().select('*').from('api_tokens')
+
+    console.log({ tokenBeforeSignOut })
+
+    const response2 = await client
+      .delete('/sessions')
+      .header('Authorization', `Bearer ${apiToken.token}`)
     response2.assertStatus(200)
 
-    
+    const token = await Database.query().select('*').from('api_tokens')
 
+    console.log({ token })
+
+    assert.isEmpty(token)
   })
 })

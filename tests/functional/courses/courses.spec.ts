@@ -1,7 +1,9 @@
 /* eslint-disable prettier/prettier */
 import { test } from '@japa/runner'
+
 import Database from '@ioc:Adonis/Lucid/Database'
 import { assert } from '@japa/preset-adonis'
+import AdmFactory from 'Database/factories/AdmFactory'
 
 test.group('Group', (group) => {
   group.each.setup(async () => {
@@ -10,12 +12,14 @@ test.group('Group', (group) => {
   })
 
   test('it should create a course', async ({ client }) => {
+    const user = await AdmFactory.create()
     const coursePayload = {
       degree: 'médio técnico',
       name: 'Informática',
     }
 
-    const response = await client.post('/course').json(coursePayload)
+    const response = await client.post('/course').json(coursePayload).loginAs(user)
+
     const { ...expected } = coursePayload
     response.assertStatus(201)
     response.assertBodyContains({ course: expected })
@@ -25,15 +29,16 @@ test.group('Group', (group) => {
     client,
     assert,
   }) => {
+    const user = await AdmFactory.create()
     const coursePayload = {
       degree: 'médio técnico',
       name: 'Informática',
     }
 
-    const response = await client.post('/course').json(coursePayload)
+    const response = await client.post('/course').json(coursePayload).loginAs(user)
     response.assertStatus(201)
 
-    const response2 = await client.post('/course').json(coursePayload)
+    const response2 = await client.post('/course').json(coursePayload).loginAs(user)
     response2.assertStatus(409)
     const body = response2.body()
     assert.exists(body.message)
@@ -44,12 +49,13 @@ test.group('Group', (group) => {
   })
 
   test('it should return a course', async ({ client, assert }) => {
+    const user = await AdmFactory.create()
     const coursePayload = {
       degree: 'médio técnico',
       name: 'Informática',
     }
 
-    const response = await client.post('/course').json(coursePayload)
+    const response = await client.post('/course').json(coursePayload).loginAs(user)
     response.assertStatus(201)
 
     const response2 = await client.get(`/course/${response.body().course.id}`)
@@ -184,7 +190,7 @@ test.group('Group', (group) => {
   })
 
   // it should return all class by course
-  test('it should return all class by course', async ({ client, assert }) => {})
+  // test('it should return all class by course', async ({ client, assert }) => {})
 
   test('it should update a course', async ({ client, assert }) => {
     const biologia = {
