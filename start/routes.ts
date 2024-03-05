@@ -8,10 +8,10 @@ Route.post('/users', 'UsersController.store')
 
 Route.group(() => {
   // Session
-  Route.delete('/sessions', 'SessionsController.destroy').middleware('auth')
+  Route.delete('/sessions', 'SessionsController.destroy')
 
   // Course
-  Route.post('/course', 'CoursesController.store').middleware('auth')
+  Route.post('/course', 'CoursesController.store')
   Route.get('/course/:id', 'CoursesController.show')
   Route.get('/course', 'CoursesController.index')
   Route.get('/course/:id/classes', 'CoursesController.classesByCourse')
@@ -27,6 +27,6 @@ Route.group(() => {
   // Events
   Route.post('/events', 'EventsController.store')
   Route.patch('/events/:id', 'EventsController.update')
-  Route.get('/events', 'EventsController.index')
+  Route.get('/events', 'EventsController.index').middleware(['acl:student'])
   Route.delete('/events/:id', 'EventsController.destroy')
-}).middleware('auth')
+}).middleware(['auth', 'acl:server adm'])

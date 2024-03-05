@@ -30,7 +30,7 @@ test.group('Session', (group) => {
     console.log(response.body())
     assert.equal(response.body().code, 'BAD_REQUEST')
     assert.equal(response.body().status, 400)
-    assert.equal(response.body().message, 'Credenciais inválidas')
+    assert.equal(response.body().message, 'invalid credentials')
   })
 
   test('it should return 200 when user signs out', async ({ client }) => {

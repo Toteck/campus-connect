@@ -4,6 +4,7 @@ import { test } from '@japa/runner'
 import Database from '@ioc:Adonis/Lucid/Database'
 import { assert } from '@japa/preset-adonis'
 import AdmFactory from 'Database/factories/AdmFactory'
+import StudentFactory from 'Database/factories/StudentFactory'
 
 test.group('Group', (group) => {
   group.each.setup(async () => {
@@ -12,13 +13,15 @@ test.group('Group', (group) => {
   })
 
   test('it should create a course', async ({ client }) => {
-    const user = await AdmFactory.create()
+    const admUser = await AdmFactory.create()
+    const student = await StudentFactory.create()
     const coursePayload = {
       degree: 'médio técnico',
       name: 'Informática',
     }
 
-    const response = await client.post('/course').json(coursePayload).loginAs(user)
+    const response = await client.post('/course').json(coursePayload).loginAs(student)
+    console.log(response.body())
 
     const { ...expected } = coursePayload
     response.assertStatus(201)
