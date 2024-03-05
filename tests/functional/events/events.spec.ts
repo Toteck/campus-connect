@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
+import AdmFactory from 'Database/factories/AdmFactory'
 import EventFactory from 'Database/factories/EventFactory'
 
 test.group('Events', (group) => {
@@ -10,6 +11,7 @@ test.group('Events', (group) => {
   })
 
   test('it should create an event', async ({ client }) => {
+    const user = await AdmFactory.create()
     const eventPayload = {
       title:
         'Edital nº 12 - Processo Seletivo Simplificado para Monitoria nos Cursos de Graduação - IFMA TIMON',
@@ -22,7 +24,7 @@ test.group('Events', (group) => {
         'https://portal.ifma.edu.br/concursos-e-seletivos/?d=KyMzdWRdMEtRIkMmUENcRX5oc0B6RHxGZFdEQUNHVXNTRVBBUkFET1JASUZNQTAyMTE1M2FlZmJiMzg1YWNhZjk2MzkzNTIxMWQ3M1t8XTAwMV9TZWxldGl2b19BbHVub19UTU5fMTJfMjAyNC5wZGY=',
     }
 
-    const response = await client.post('/events').json(eventPayload)
+    const response = await client.post('/events').json(eventPayload).loginAs(user)
 
     response.assertStatus(201)
     console.log(response.body().event)
@@ -32,6 +34,7 @@ test.group('Events', (group) => {
     client,
     assert,
   }) => {
+    const user = await AdmFactory.create()
     const eventPayload = {
       title:
         'Edital nº 12 - Processo Seletivo Simplificado para Monitoria nos Cursos de Graduação - IFMA TIMON',
@@ -44,7 +47,7 @@ test.group('Events', (group) => {
         'https://portal.ifma.edu.br/concursos-e-seletivos/?d=KyMzdWRdMEtRIkMmUENcRX5oc0B6RHxGZFdEQUNHVXNTRVBBUkFET1JASUZNQTAyMTE1M2FlZmJiMzg1YWNhZjk2MzkzNTIxMWQ3M1t8XTAwMV9TZWxldGl2b19BbHVub19UTU5fMTJfMjAyNC5wZGY=',
     }
 
-    const response = await client.post('/events').json(eventPayload)
+    const response = await client.post('/events').json(eventPayload).loginAs(user)
     response.assertStatus(201)
 
     // Tentando criar outro evento com o mesmo título
@@ -60,7 +63,7 @@ test.group('Events', (group) => {
         'https://portal.ifma.edu.br/concursos-e-seletivos/?d=KyMzdWRdMEtRIkMmUENcRX5oc0B6RHxGZFdEQUNHVXNTRVBBUkFET1JASUZNQTAyMTE1M2FlZmJiMzg1YWNhZjk2MzkzNTIxMWQ3M1t8XTAwMV9TZWxldGl2b19BbHVub19UTU5fMTJfMjAyNC5wZGY=',
     }
 
-    const response2 = await client.post('/events').json(eventPayload2)
+    const response2 = await client.post('/events').json(eventPayload2).loginAs(user)
 
     response2.assertStatus(409)
 
@@ -75,7 +78,7 @@ test.group('Events', (group) => {
   // Implementação do teste para tentar atualizar um evento
   test('it should update an event', async ({ client, assert }) => {
     const event = await EventFactory.create()
-
+    const user = await AdmFactory.create()
     const eventPayload = {
       title: 'test',
       description: 'test',
@@ -83,7 +86,7 @@ test.group('Events', (group) => {
       category: 'edital',
     }
 
-    const response = await client.patch(`/events/${event.id}`).json(eventPayload)
+    const response = await client.patch(`/events/${event.id}`).json(eventPayload).loginAs(user)
 
     const body = response.body()
 
@@ -102,6 +105,7 @@ test.group('Events', (group) => {
   }) => {
     const event = await EventFactory.create()
     const event2 = await EventFactory.create()
+    const user = await AdmFactory.create()
 
     // Iremos tentar atualizar o evento 1 com o título do evento 2.
     // Deve ocorrer um erro informando que o título está sendo utilizado por outro evento!
@@ -112,7 +116,7 @@ test.group('Events', (group) => {
       category: 'edital',
     }
 
-    const response = await client.patch(`/events/${event.id}`).json(eventPayload)
+    const response = await client.patch(`/events/${event.id}`).json(eventPayload).loginAs(user)
 
     const body = response.body()
 
@@ -126,11 +130,12 @@ test.group('Events', (group) => {
 
   // Retorna todos os eventos
   test('it should return all events', async ({ client, assert }) => {
+    const user = await AdmFactory.create()
     for (let i = 0; i < 6; i++) {
       await EventFactory.create()
     }
 
-    const response = await client.get('/events')
+    const response = await client.get('/events').loginAs(user)
 
     response.assertStatus(200)
 
@@ -140,6 +145,7 @@ test.group('Events', (group) => {
 
   // Retorna todos os eventos por título
   test('it should return all events by title', async ({ client, assert }) => {
+    const user = await AdmFactory.create()
     // Criação de um evento
     const eventPayload = {
       title:
@@ -152,7 +158,7 @@ test.group('Events', (group) => {
         'https://portal.ifma.edu.br/concursos-e-seletivos/?d=KyMzdWRdMEtRIkMmUENcRX5oc0B6RHxGZFdEQUNHVXNTRVBBUkFET1JASUZNQTAyMTE1M2FlZmJiMzg1YWNhZjk2MzkzNTIxMWQ3M1t8XTAwMV9TZWxldGl2b19BbHVub19UTU5fMTJfMjAyNC5wZGY=',
     }
 
-    const response = await client.post('/events').json(eventPayload)
+    const response = await client.post('/events').json(eventPayload).loginAs(user)
     response.assertStatus(201)
 
     // Criação de um evento
@@ -166,11 +172,11 @@ test.group('Events', (group) => {
         'https://portal.ifma.edu.br/concursos-e-seletivos/?d=KyMzdWRdMEtRIkMmUENcRX5oc0B6RHxGZFdEQUNHVXNTRVBBUkFET1JASUZNQTAyMTE1M2FlZmJiMzg1YWNhZjk2MzkzNTIxMWQ3M1t8XTAwMV9TZWxldGl2b19BbHVub19UTU5fMTJfMjAyNC5wZGY=',
     }
 
-    const response2 = await client.post('/events').json(eventPayload2)
+    const response2 = await client.post('/events').json(eventPayload2).loginAs(user)
     response2.assertStatus(201)
 
     // Busca do evento pelo título "Monitoria"
-    const response3 = await client.get(`/events?text=Monitoria`)
+    const response3 = await client.get(`/events?text=Monitoria`).loginAs(user)
     response3.assertStatus(200)
 
     console.log(response3.body())
@@ -178,6 +184,7 @@ test.group('Events', (group) => {
 
   // Retorna todos os eventos por descrição
   test('it should return all events by description', async ({ client, assert }) => {
+    const user = await AdmFactory.create()
     // Criação de um evento
     const eventPayload = {
       title:
@@ -190,7 +197,7 @@ test.group('Events', (group) => {
         'https://portal.ifma.edu.br/concursos-e-seletivos/?d=KyMzdWRdMEtRIkMmUENcRX5oc0B6RHxGZFdEQUNHVXNTRVBBUkFET1JASUZNQTAyMTE1M2FlZmJiMzg1YWNhZjk2MzkzNTIxMWQ3M1t8XTAwMV9TZWxldGl2b19BbHVub19UTU5fMTJfMjAyNC5wZGY=',
     }
 
-    const response = await client.post('/events').json(eventPayload)
+    const response = await client.post('/events').json(eventPayload).loginAs(user)
     response.assertStatus(201)
 
     // Criação de um evento
@@ -204,11 +211,11 @@ test.group('Events', (group) => {
         'https://portal.ifma.edu.br/concursos-e-seletivos/?d=KyMzdWRdMEtRIkMmUENcRX5oc0B6RHxGZFdEQUNHVXNTRVBBUkFET1JASUZNQTAyMTE1M2FlZmJiMzg1YWNhZjk2MzkzNTIxMWQ3M1t8XTAwMV9TZWxldGl2b19BbHVub19UTU5fMTJfMjAyNC5wZGY=',
     }
 
-    const response2 = await client.post('/events').json(eventPayload2)
+    const response2 = await client.post('/events').json(eventPayload2).loginAs(user)
     response2.assertStatus(201)
 
     // Busca do evento pelo título "Monitoria"
-    const response3 = await client.get(`/events?text=qualquer coisa`)
+    const response3 = await client.get(`/events?text=qualquer coisa`).loginAs(user)
     response3.assertStatus(200)
 
     console.log(response3.body())
@@ -216,6 +223,7 @@ test.group('Events', (group) => {
 
   // Retorna todos os eventos por categoria
   test('it should return all events by category', async ({ client, assert }) => {
+    const user = await AdmFactory.create()
     for (let i = 0; i < 3; i++) {
       await EventFactory.merge({ category: 'notícia' }).create()
     }
@@ -224,7 +232,7 @@ test.group('Events', (group) => {
       await EventFactory.merge({ category: 'edital' }).create()
     }
 
-    const response = await client.get(`/events?category=edital`)
+    const response = await client.get(`/events?category=edital`).loginAs(user)
 
     response.assertStatus(200)
 
@@ -236,6 +244,7 @@ test.group('Events', (group) => {
     client,
     assert,
   }) => {
+    const user = await AdmFactory.create()
     // Criação de um evento
     const eventPayload = {
       title:
@@ -248,7 +257,7 @@ test.group('Events', (group) => {
         'https://portal.ifma.edu.br/concursos-e-seletivos/?d=KyMzdWRdMEtRIkMmUENcRX5oc0B6RHxGZFdEQUNHVXNTRVBBUkFET1JASUZNQTAyMTE1M2FlZmJiMzg1YWNhZjk2MzkzNTIxMWQ3M1t8XTAwMV9TZWxldGl2b19BbHVub19UTU5fMTJfMjAyNC5wZGY=',
     }
 
-    const response = await client.post('/events').json(eventPayload)
+    const response = await client.post('/events').json(eventPayload).loginAs(user)
     response.assertStatus(201)
 
     // Criação de outro evento
@@ -262,11 +271,11 @@ test.group('Events', (group) => {
         'https://portal.ifma.edu.br/concursos-e-seletivos/?d=KyMzdWRdMEtRIkMmUENcRX5oc0B6RHxGZFdEQUNHVXNTRVBBUkFET1JASUZNQTAyMTE1M2FlZmJiMzg1YWNhZjk2MzkzNTIxMWQ3M1t8XTAwMV9TZWxldGl2b19BbHVub19UTU5fMTJfMjAyNC5wZGY=',
     }
 
-    const response2 = await client.post('/events').json(eventPayload2)
+    const response2 = await client.post('/events').json(eventPayload2).loginAs(user)
     response2.assertStatus(201)
 
     // Busca do evento pelo título "Monitoria" na categoria edital
-    const response3 = await client.get(`/events?category=edital&text=monitoria`)
+    const response3 = await client.get(`/events?category=edital&text=monitoria`).loginAs(user)
     response3.assertStatus(200)
 
     console.log(response3.body())
@@ -274,6 +283,7 @@ test.group('Events', (group) => {
 
   // Deve deletar um evento
   test('it should delete an event', async ({ client, assert }) => {
+    const user = await AdmFactory.create()
     const eventPayload = {
       title:
         'Edital nº 12 - Processo Seletivo Simplificado para Monitoria nos Cursos de Graduação - IFMA TIMON',
@@ -286,12 +296,12 @@ test.group('Events', (group) => {
         'https://portal.ifma.edu.br/concursos-e-seletivos/?d=KyMzdWRdMEtRIkMmUENcRX5oc0B6RHxGZFdEQUNHVXNTRVBBUkFET1JASUZNQTAyMTE1M2FlZmJiMzg1YWNhZjk2MzkzNTIxMWQ3M1t8XTAwMV9TZWxldGl2b19BbHVub19UTU5fMTJfMjAyNC5wZGY=',
     }
 
-    const response = await client.post('/events').json(eventPayload)
+    const response = await client.post('/events').json(eventPayload).loginAs(user)
     response.assertStatus(201)
 
     const event = response.body().event
 
-    const response2 = await client.delete(`/events/${event.id}`)
+    const response2 = await client.delete(`/events/${event.id}`).loginAs(user)
 
     response2.assertStatus(200)
 
@@ -305,7 +315,8 @@ test.group('Events', (group) => {
     client,
     assert,
   }) => {
-    const response = await client.delete(`/events/1`)
+    const user = await AdmFactory.create()
+    const response = await client.delete(`/events/1`).loginAs(user)
     response.assertStatus(404)
 
     console.log(response.body())

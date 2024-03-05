@@ -64,7 +64,8 @@ test.group('Group', (group) => {
   })
 
   test('should try to return a course with an invalid id', async ({ client, assert }) => {
-    const response = await client.get('/course/1')
+    const user = await AdmFactory.create()
+    const response = await client.get('/course/1').loginAs(user)
     const body = response.body()
     assert.exists(body.message)
     assert.exists(body.code)
@@ -74,6 +75,7 @@ test.group('Group', (group) => {
   })
 
   test('it should return all courses', async ({ client, assert }) => {
+    const user = await AdmFactory.create()
     const informatica = {
       degree: 'médio técnico',
       name: 'Informática',
@@ -87,20 +89,21 @@ test.group('Group', (group) => {
       name: 'administracão',
     }
 
-    const response = await client.post('/course').json(informatica)
+    const response = await client.post('/course').json(informatica).loginAs(user)
     response.assertStatus(201)
-    const response2 = await client.post('/course').json(edificacoes)
+    const response2 = await client.post('/course').json(edificacoes).loginAs(user)
     response2.assertStatus(201)
-    const response3 = await client.post('/course').json(administracao)
+    const response3 = await client.post('/course').json(administracao).loginAs(user)
     response3.assertStatus(201)
 
-    const response4 = await client.get('/course')
+    const response4 = await client.get('/course').loginAs(user)
 
     console.log(response4.body().courses.data)
   })
 
   // Retorna todos os cursos por nome
   test('it should return all courses by name', async ({ client, assert }) => {
+    const user = await AdmFactory.create()
     const informatica = {
       degree: 'médio técnico',
       name: 'Informática',
@@ -114,20 +117,21 @@ test.group('Group', (group) => {
       name: 'administracão',
     }
 
-    const response = await client.post('/course').json(informatica)
+    const response = await client.post('/course').json(informatica).loginAs(user)
     response.assertStatus(201)
-    const response2 = await client.post('/course').json(edificacoes)
+    const response2 = await client.post('/course').json(edificacoes).loginAs(user)
     response2.assertStatus(201)
-    const response3 = await client.post('/course').json(administracao)
+    const response3 = await client.post('/course').json(administracao).loginAs(user)
     response3.assertStatus(201)
 
-    const response4 = await client.get('/course?name=ica')
+    const response4 = await client.get('/course?name=ica').loginAs(user)
     response4.assertStatus(200)
 
     console.log(response4.body().courses.data)
   })
 
   test('it should return all courses by degree', async ({ client, assert }) => {
+    const user = await AdmFactory.create()
     const sistemasParaInternet = {
       degree: 'superior',
       name: 'Sistemas de Internet',
@@ -141,20 +145,21 @@ test.group('Group', (group) => {
       name: 'administracão',
     }
 
-    const response = await client.post('/course').json(sistemasParaInternet)
+    const response = await client.post('/course').json(sistemasParaInternet).loginAs(user)
     response.assertStatus(201)
-    const response2 = await client.post('/course').json(biologia)
+    const response2 = await client.post('/course').json(biologia).loginAs(user)
     response2.assertStatus(201)
-    const response3 = await client.post('/course').json(administracao)
+    const response3 = await client.post('/course').json(administracao).loginAs(user)
     response3.assertStatus(201)
 
-    const response4 = await client.get('/course?degree=médio técnico')
+    const response4 = await client.get('/course?degree=médio técnico').loginAs(user)
     response4.assertStatus(200)
 
     console.log(response4.body().courses.data)
   })
 
   test('it should return all courses by name and degree', async ({ client, assert }) => {
+    const user = await AdmFactory.create()
     const sistemasParaInternet = {
       degree: 'superior',
       name: 'Sistemas de Internet',
@@ -174,16 +179,16 @@ test.group('Group', (group) => {
       name: 'edificacões',
     }
 
-    const response = await client.post('/course').json(sistemasParaInternet)
+    const response = await client.post('/course').json(sistemasParaInternet).loginAs(user)
     response.assertStatus(201)
-    const response2 = await client.post('/course').json(biologia)
+    const response2 = await client.post('/course').json(biologia).loginAs(user)
     response2.assertStatus(201)
-    const response3 = await client.post('/course').json(administracao)
+    const response3 = await client.post('/course').json(administracao).loginAs(user)
     response3.assertStatus(201)
-    const response4 = await client.post('/course').json(edificacoes)
+    const response4 = await client.post('/course').json(edificacoes).loginAs(user)
     response4.assertStatus(201)
 
-    const response5 = await client.get('/course?name=Internet&degree=superior')
+    const response5 = await client.get('/course?name=Internet&degree=superior').loginAs(user)
     response5.assertStatus(200)
 
     console.log(response5.body().courses.data)
@@ -193,12 +198,13 @@ test.group('Group', (group) => {
   // test('it should return all class by course', async ({ client, assert }) => {})
 
   test('it should update a course', async ({ client, assert }) => {
+    const user = await AdmFactory.create()
     const biologia = {
       degree: 'médio técnico',
       name: 'Biologia',
     }
 
-    const response = await client.post('/course').json(biologia)
+    const response = await client.post('/course').json(biologia).loginAs(user)
     response.assertStatus(201)
 
     console.log(response.body().course)
@@ -210,6 +216,7 @@ test.group('Group', (group) => {
     const response2 = await client
       .patch(`/course/${response.body().course.id}`)
       .json(updatedBiologia)
+      .loginAs(user)
 
     response2.assertStatus(200)
 
@@ -221,6 +228,7 @@ test.group('Group', (group) => {
     client,
     assert,
   }) => {
+    const user = await AdmFactory.create()
     const sistemasParaInternet = {
       degree: 'superior',
       name: 'Sistemas de Internet',
@@ -230,21 +238,23 @@ test.group('Group', (group) => {
       name: 'Biologia',
     }
 
-    const response = await client.post('/course').json(sistemasParaInternet)
+    const response = await client.post('/course').json(sistemasParaInternet).loginAs(user)
     response.assertStatus(201)
 
-    const response2 = await client.post('/course').json(biologia)
+    const response2 = await client.post('/course').json(biologia).loginAs(user)
     response2.assertStatus(201)
 
     const response3 = await client
       .patch(`/course/1`)
       .json({ ...sistemasParaInternet, name: 'Biologia' })
+      .loginAs(user)
 
     console.log(response3.body())
   })
 
   test('it should try update a course with invalid id', async ({ client, assert }) => {
-    const response = await client.patch(`/course/1}`).json({})
+    const user = await AdmFactory.create()
+    const response = await client.patch(`/course/1}`).json({}).loginAs(user)
 
     response.assertStatus(404)
 
@@ -257,7 +267,8 @@ test.group('Group', (group) => {
     client,
     assert,
   }) => {
-    const response = await client.post('/course').json({})
+    const user = await AdmFactory.create()
+    const response = await client.post('/course').json({}).loginAs(user)
     response.assertStatus(422)
 
     assert.equal(response.body().code, 'BAD_REQUEST')
@@ -265,16 +276,17 @@ test.group('Group', (group) => {
   })
 
   test('it should delete a course', async ({ client, assert }) => {
+    const user = await AdmFactory.create()
     const coursePayload = {
       degree: 'médio técnico',
       name: 'Informática',
     }
 
-    const response = await client.post('/course').json(coursePayload)
+    const response = await client.post('/course').json(coursePayload).loginAs(user)
     response.assertStatus(201)
     const curso = response.body().course
 
-    const response2 = await client.delete(`/course/${curso.id}`)
+    const response2 = await client.delete(`/course/${curso.id}`).loginAs(user)
     response2.assertStatus(200)
 
     // verificando no banco de dados se o curso realmente deletado
@@ -284,7 +296,8 @@ test.group('Group', (group) => {
   })
 
   test('it should try delete a course with invalid id', async ({ client, assert }) => {
-    const response = await client.delete(`/course/1`)
+    const user = await AdmFactory.create()
+    const response = await client.delete(`/course/1`).loginAs(user)
     response.assertStatus(404)
 
     assert.equal(response.body().code, 'BAD_REQUEST')
