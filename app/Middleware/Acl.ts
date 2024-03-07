@@ -7,8 +7,7 @@ export default class Acl {
     allowedRules: string[]
   ) {
     const user = await auth.authenticate()
-    console.log({ user })
-    console.log({ allowedRules })
+
     if (!allowedRules.includes(user.profile)) {
       return response.unauthorized({ error: { meessage: 'access denied' } })
     }

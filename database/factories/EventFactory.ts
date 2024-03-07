@@ -19,6 +19,6 @@ export default Factory.define(Event, ({ faker }) => {
     // o que deve eliminar o erro do TypeScript
     category: faker.helpers.arrayElement(categories) as 'notícia' | 'edital' | 'evento' | 'reunião',
     thumbnail: faker.internet.url(),
-    anexo: faker.internet.url(),
+    anexo: [faker.internet.url().toString()],
   }
 }).build()

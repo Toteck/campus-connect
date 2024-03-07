@@ -12,7 +12,7 @@ export default class extends BaseSchema {
       table.dateTime('date').notNullable()
       table.enum('category', ['notícia', 'edital', 'evento', 'reunião'] as const).notNullable()
       table.string('thumbnail', 255).nullable()
-      table.string('anexo').nullable()
+      table.json('anexo').nullable()
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
     })

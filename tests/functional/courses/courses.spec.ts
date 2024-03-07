@@ -20,8 +20,7 @@ test.group('Group', (group) => {
       name: 'Informática',
     }
 
-    const response = await client.post('/course').json(coursePayload).loginAs(student)
-    console.log(response.body())
+    const response = await client.post('/course').json(coursePayload).loginAs(admUser)
 
     const { ...expected } = coursePayload
     response.assertStatus(201)

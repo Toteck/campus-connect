@@ -3,6 +3,7 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import AdmFactory from 'Database/factories/AdmFactory'
 import EventFactory from 'Database/factories/EventFactory'
+import StudentFactory from 'Database/factories/StudentFactory'
 
 test.group('Events', (group) => {
   group.each.setup(async () => {
@@ -11,20 +12,23 @@ test.group('Events', (group) => {
   })
 
   test('it should create an event', async ({ client }) => {
-    const user = await AdmFactory.create()
+    const userAdm = await AdmFactory.create()
+    const student = await StudentFactory.create()
     const eventPayload = {
       title:
-        'Edital nº 12 - Processo Seletivo Simplificado para Monitoria nos Cursos de Graduação - IFMA TIMON',
+        'Edital nº 4/2024 - Seleção de Alunas para o Programa Mulheres MIL - Gestor de Microempresas 2024',
       description:
-        'Processo Seletivo Simplificado para o Programa de Monitoria referente ao primeiro semestre de 2024 para os Cursos Superiores do IFMA Campus Timon.',
-      date: '2024-02-01',
+        'Seleção de Alunas para o Curso de Formação Inicial e Continuada (FIC) de GESTOR DE MICROEMPRESA do Programa Mulheres Mil.',
+      date: '2024-01-31',
       category: 'edital',
-      thumbnail: 'https://portal.ifma.edu.br/wp-content/uploads/2024/02/CERTEC-Parceria-EBC-5.jpg',
-      anexo:
-        'https://portal.ifma.edu.br/concursos-e-seletivos/?d=KyMzdWRdMEtRIkMmUENcRX5oc0B6RHxGZFdEQUNHVXNTRVBBUkFET1JASUZNQTAyMTE1M2FlZmJiMzg1YWNhZjk2MzkzNTIxMWQ3M1t8XTAwMV9TZWxldGl2b19BbHVub19UTU5fMTJfMjAyNC5wZGY=',
+      anexo: [
+        'https://portal.ifma.edu.br/concursos-e-seletivos/?d=KyMzdWRdMEtRIkMmUENcRX5oc0B6RHxGZFdEQUNHVXNTRVBBUkFET1JASUZNQTQ5MWYyMmUxYjFmMDNmODUyNjk3ZTA2Njc2MDRmY1t8XTAwM19TZWxldGl2b19BbHVub19UTU5fNF8yMDI0LnBkZg==',
+        'https://portal.ifma.edu.br/concursos-e-seletivos/?d=KyMzdWRdMEtRIkMmUENcRX5oc0B6RHxGZFdEQUNHVXNTRVBBUkFET1JASUZNQTIyMDlhMDNiY2QwZWMzYzA4OTc2ZGZmMGU1MzE5N1t8XTAwMl9TZWxldGl2b19BbHVub19UTU5fNF8yMDI0LnBkZg==',
+        'https://portal.ifma.edu.br/concursos-e-seletivos/?d=KyMzdWRdMEtRIkMmUENcRX5oc0B6RHxGZFdEQUNHVXNTRVBBUkFET1JASUZNQWNhYzEyZGU3ZDhiNzBhOGJhMWY1MzM1YzkzZDRlZVt8XTAwMV9TZWxldGl2b19BbHVub19UTU5fNF8yMDI0LnBkZg==',
+      ],
     }
 
-    const response = await client.post('/events').json(eventPayload).loginAs(user)
+    const response = await client.post('/events').json(eventPayload).loginAs(userAdm)
 
     response.assertStatus(201)
     console.log(response.body().event)
@@ -130,12 +134,14 @@ test.group('Events', (group) => {
 
   // Retorna todos os eventos
   test('it should return all events', async ({ client, assert }) => {
-    const user = await AdmFactory.create()
+    const admUser = await AdmFactory.create()
+    const student = await StudentFactory.create()
+
     for (let i = 0; i < 6; i++) {
       await EventFactory.create()
     }
 
-    const response = await client.get('/events').loginAs(user)
+    const response = await client.get('/events').loginAs(student)
 
     response.assertStatus(200)
 

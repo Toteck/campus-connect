@@ -22,7 +22,7 @@ export default class Event extends BaseModel {
   public thumbnail: string | null
 
   @column()
-  public anexo: string | null
+  public anexo: string[] | null
 
   @manyToMany(() => User, {
     pivotTable: 'users_events',

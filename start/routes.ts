@@ -2,7 +2,7 @@ import Route from '@ioc:Adonis/Core/Route'
 
 // Session
 Route.post('/sessions', 'SessionsController.store') // Login
-
+Route.get('/events', 'EventsController.index').middleware(['auth', 'acl:student,server adm'])
 // User
 Route.post('/users', 'UsersController.store')
 
@@ -27,6 +27,6 @@ Route.group(() => {
   // Events
   Route.post('/events', 'EventsController.store')
   Route.patch('/events/:id', 'EventsController.update')
-  Route.get('/events', 'EventsController.index').middleware(['acl:student'])
+  //Route.get('/events', 'EventsController.index')
   Route.delete('/events/:id', 'EventsController.destroy')
 }).middleware(['auth', 'acl:server adm'])
