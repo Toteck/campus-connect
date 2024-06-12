@@ -46,15 +46,21 @@ export default class EventsController {
   }
 
   public async index({ request, response }: HttpContextContract) {
-    const { text, ['category']: category } = request.qs()
+    const { text, ['eventType']: eventType } = request.qs()
 
     const page = request.input('page', 1)
     const limit = request.input('limit', 10)
 
-    const eventsQuery = this.filterByQueryString(category, text) // Quando pegamos esse resultado sem o await está sendo retornado uma query de busca
+    const eventsQuery = this.filterByQueryString(eventType, text) // Quando pegamos esse resultado sem o await está sendo retornado uma query de busca
     const events = await eventsQuery.paginate(page, limit)
 
     return response.ok({ events })
+  }
+
+  public async show({ request, response }: HttpContextContract) {
+    const id = request.param('id')
+    const event = await Event.findOrFail(id)
+    return response.ok({ event })
   }
 
   public async destroy({ request, response }: HttpContextContract) {
@@ -67,9 +73,9 @@ export default class EventsController {
     return response.ok({})
   }
 
-  private filterByQueryString(category: string, text: string) {
-    if (category && text) return this.filterByCategoryAndText(category, text)
-    else if (category) return this.filterByCategory(category)
+  private filterByQueryString(eventType: string, text: string) {
+    if (eventType && text) return this.filterByCategoryAndText(eventType, text)
+    else if (eventType) return this.filterByEventType(eventType)
     else if (text) return this.filterByText(text)
     else return this.all()
   }
@@ -78,8 +84,8 @@ export default class EventsController {
     return Event.query()
   }
 
-  private filterByCategory(category: string) {
-    return Event.query().where('category', category)
+  private filterByEventType(eventType: string) {
+    return Event.query().where('eventType', eventType)
   }
 
   private filterByText(text: string) {
