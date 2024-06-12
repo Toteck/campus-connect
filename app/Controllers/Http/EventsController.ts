@@ -74,7 +74,7 @@ export default class EventsController {
   }
 
   private filterByQueryString(eventType: string, text: string) {
-    if (eventType && text) return this.filterByCategoryAndText(eventType, text)
+    if (eventType && text) return this.filterByEventTypeAndText(eventType, text)
     else if (eventType) return this.filterByEventType(eventType)
     else if (text) return this.filterByText(text)
     else return this.all()
@@ -94,11 +94,11 @@ export default class EventsController {
       .orWhere('description', 'LIKE', `%${text}%`)
   }
 
-  private filterByCategoryAndText(category: string, text: string) {
+  private filterByEventTypeAndText(eventType: string, text: string) {
     let query = Event.query()
 
-    if (category) {
-      query = query.where('category', category)
+    if (eventType) {
+      query = query.where('eventType', eventType)
     }
 
     if (text) {
