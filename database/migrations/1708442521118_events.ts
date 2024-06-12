@@ -7,7 +7,8 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
 
-      table.string('title').notNullable().unique()
+      table.string('title').notNullable()
+      table.string('slug', 255).unique().notNullable()
       table.text('description').notNullable()
       table
         .enum('event_type', ['notícia', 'edital', 'evento', 'reunião', 'aviso'] as const)

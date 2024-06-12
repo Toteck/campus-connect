@@ -74,7 +74,8 @@ export default class EventsController {
   }
 
   private filterByQueryString(eventType: string, publicType: string, text: string) {
-    if (eventType && text) return this.filterByEventTypeAndText(eventType, text)
+    if (eventType && publicType && text)
+      return this.filterByCategoriesTypeAndText(eventType, publicType, text)
     else if (eventType) return this.filterByEventType(eventType)
     else if (publicType) return this.filterByPublicType(publicType)
     else if (text) return this.filterByText(text)
@@ -100,21 +101,19 @@ export default class EventsController {
   }
 
   /**
-   * Filtro utilizado quando o usuário quer pesquisar por query string e categorias (eventType e publicType)
-   * filterByEventTypeAndText(eventType: string, publicType: string, text: string)
+   *
+   * Essa função tem um problema porque ela só retorna se o nome for exatamente igual ao que está salvo no bd
    */
-  private filterByEventTypeAndText(eventType: string, text: string) {
+  private filterByCategoriesTypeAndText(eventType: string, publicType: string, text: string) {
     let query = Event.query()
 
     if (eventType) {
       query = query.where('eventType', eventType)
     }
 
-    /**
-     *  if (publicType) {
+    if (publicType) {
       query = query.where('publicType', publicType)
     }
-     */
 
     if (text) {
       query = query.where((builder) => {

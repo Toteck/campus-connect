@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
 import { BaseModel, ManyToMany, column, manyToMany } from '@ioc:Adonis/Lucid/Orm'
+import { slugify } from '@ioc:Adonis/Addons/LucidSlugify'
 import User from './User'
 
 export default class Event extends BaseModel {
@@ -8,6 +9,13 @@ export default class Event extends BaseModel {
 
   @column()
   public title: string
+
+  @column()
+  @slugify({
+    strategy: 'dbIncrement',
+    fields: ['title'],
+  })
+  public slug: string
 
   @column()
   public description: string
