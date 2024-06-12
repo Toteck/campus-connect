@@ -46,12 +46,12 @@ export default class EventsController {
   }
 
   public async index({ request, response }: HttpContextContract) {
-    const { text, ['eventType']: eventType } = request.qs()
+    const { text, ['eventType']: eventType, ['publicType']: publicType } = request.qs()
 
     const page = request.input('page', 1)
     const limit = request.input('limit', 10)
 
-    const eventsQuery = this.filterByQueryString(eventType, text) // Quando pegamos esse resultado sem o await está sendo retornado uma query de busca
+    const eventsQuery = this.filterByQueryString(eventType, publicType, text) // Quando pegamos esse resultado sem o await está sendo retornado uma query de busca
     const events = await eventsQuery.paginate(page, limit)
 
     return response.ok({ events })
@@ -73,9 +73,10 @@ export default class EventsController {
     return response.ok({})
   }
 
-  private filterByQueryString(eventType: string, text: string) {
+  private filterByQueryString(eventType: string, publicType: string, text: string) {
     if (eventType && text) return this.filterByEventTypeAndText(eventType, text)
     else if (eventType) return this.filterByEventType(eventType)
+    else if (publicType) return this.filterByPublicType(publicType)
     else if (text) return this.filterByText(text)
     else return this.all()
   }
@@ -88,18 +89,32 @@ export default class EventsController {
     return Event.query().where('eventType', eventType)
   }
 
+  private filterByPublicType(publicType: string) {
+    return Event.query().where('publicType', publicType)
+  }
+
   private filterByText(text: string) {
     return Event.query()
       .where('title', 'LIKE', `%${text}%`)
       .orWhere('description', 'LIKE', `%${text}%`)
   }
 
+  /**
+   * Filtro utilizado quando o usuário quer pesquisar por query string e categorias (eventType e publicType)
+   * filterByEventTypeAndText(eventType: string, publicType: string, text: string)
+   */
   private filterByEventTypeAndText(eventType: string, text: string) {
     let query = Event.query()
 
     if (eventType) {
       query = query.where('eventType', eventType)
     }
+
+    /**
+     *  if (publicType) {
+      query = query.where('publicType', publicType)
+    }
+     */
 
     if (text) {
       query = query.where((builder) => {
