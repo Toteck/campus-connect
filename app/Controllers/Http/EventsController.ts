@@ -1,7 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import CreateEventValidator from 'App/Validators/CreateEventValidator'
 import Event from 'App/Models/Event'
-import { DateTime } from 'luxon'
 import BadRequestException from 'App/Exceptions/BadRequestException'
 
 export default class EventsController {
@@ -50,7 +49,7 @@ export default class EventsController {
     const { text, ['category']: category } = request.qs()
 
     const page = request.input('page', 1)
-    const limit = request.input('limit', 5)
+    const limit = request.input('limit', 10)
 
     const eventsQuery = this.filterByQueryString(category, text) // Quando pegamos esse resultado sem o await está sendo retornado uma query de busca
     const events = await eventsQuery.paginate(page, limit)

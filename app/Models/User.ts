@@ -12,19 +12,13 @@ export default class User extends BaseModel {
   public name: string
 
   @column()
-  public register: string
-
-  @column()
   public email: string
 
   @column({ serializeAs: null })
   public password: string
 
   @column()
-  public profile: 'student' | 'parent' | 'server adm' | 'professor'
-
-  @column()
-  public photo: string | null
+  public profile: 'student' | 'parent' | 'adm' | 'professor'
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

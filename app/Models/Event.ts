@@ -12,17 +12,14 @@ export default class Event extends BaseModel {
   @column()
   public description: string
 
-  @column.dateTime()
-  public date: DateTime
+  @column()
+  public eventType: 'notícia' | 'edital' | 'aviso' | 'reunião' | 'evento'
 
   @column()
-  public category: 'notícia' | 'edital' | 'evento' | 'reunião'
+  public publicType: 'student' | 'professor' | 'parent' | 'general'
 
   @column()
   public thumbnail: string | null
-
-  @column()
-  public anexo: string[] | null
 
   @manyToMany(() => User, {
     pivotTable: 'users_events',

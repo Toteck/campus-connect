@@ -7,12 +7,10 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
 
-      table.string('name', 255).notNullable()
-      table.string('register', 255).notNullable().unique()
-      table.string('email', 255).notNullable().unique()
-      table.string('password', 12).notNullable()
-      table.enum('profile', ['student', 'parent', 'server adm', 'professor']).notNullable()
-      table.string('photo', 255).nullable()
+      table.string('name').notNullable()
+      table.string('email').notNullable().unique()
+      table.string('password').notNullable()
+      table.enum('profile', ['student', 'parent', 'adm', 'professor']).notNullable()
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
     })
