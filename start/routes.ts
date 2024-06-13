@@ -1,4 +1,6 @@
+/* eslint-disable prettier/prettier */
 import Route from '@ioc:Adonis/Core/Route'
+import CategoriesController from 'App/Controllers/Http/CategoriesController'
 
 // Session
 Route.post('/sessions', 'SessionsController.store') // Login
@@ -29,4 +31,6 @@ Route.group(() => {
   Route.get('/events', 'EventsController.index')
   Route.get('/events/:id', 'EventsController.show')
   Route.delete('/events/:id', 'EventsController.destroy')
+
+  Route.get('categories', 'CategoriesController.index')
 }).middleware(['auth', 'acl:student,adm,parent,professor'])
