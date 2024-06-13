@@ -118,10 +118,6 @@ export default class EventsController {
       query = query.where('eventType', eventType).andWhere('publicType', publicType)
     }
 
-    // if (eventType) {
-    //   query = query.where('eventType', eventType)
-    // }
-
     if (text) {
       query = query.where((builder) => {
         builder.where('slug', 'LIKE', `%${text}%`)
