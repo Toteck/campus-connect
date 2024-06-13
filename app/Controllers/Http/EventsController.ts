@@ -2,6 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import CreateEventValidator from 'App/Validators/CreateEventValidator'
 import Event from 'App/Models/Event'
 import BadRequestException from 'App/Exceptions/BadRequestException'
+import slug from 'slug'
 
 export default class EventsController {
   public async store({ response, request }: HttpContextContract) {
@@ -46,7 +47,9 @@ export default class EventsController {
   }
 
   public async index({ request, response }: HttpContextContract) {
-    const { text, ['eventType']: eventType, ['publicType']: publicType } = request.qs()
+    const { qs, ['eventType']: eventType, ['publicType']: publicType } = request.qs()
+
+    const text = slug(qs)
 
     const page = request.input('page', 1)
     const limit = request.input('limit', 10)
@@ -95,9 +98,7 @@ export default class EventsController {
   }
 
   private filterByText(text: string) {
-    return Event.query()
-      .where('title', 'LIKE', `%${text}%`)
-      .orWhere('description', 'LIKE', `%${text}%`)
+    return Event.query().where('slug', 'LIKE', `%${text}%`)
   }
 
   /**
