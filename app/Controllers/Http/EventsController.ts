@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import CreateEventValidator from 'App/Validators/CreateEventValidator'
 import Event from 'App/Models/Event'
@@ -79,6 +80,7 @@ export default class EventsController {
   private filterByQueryString(eventType: string, publicType: string, text: string) {
     if (eventType && publicType && text)
       return this.filterByCategoriesTypeAndText(eventType, publicType, text)
+    else if (eventType && publicType) return this.filterByCategories(eventType, publicType)
     else if (eventType) return this.filterByEventType(eventType)
     else if (publicType) return this.filterByPublicType(publicType)
     else if (text) return this.filterByText(text)
@@ -97,6 +99,10 @@ export default class EventsController {
     return Event.query().where('publicType', publicType)
   }
 
+  private filterByCategories(eventType: string, publicType: string) {
+    return Event.query().where('eventType', eventType).andWhere('publicType', publicType)
+  }
+
   private filterByText(text: string) {
     return Event.query().where('slug', 'LIKE', `%${text}%`)
   }
@@ -108,17 +114,17 @@ export default class EventsController {
   private filterByCategoriesTypeAndText(eventType: string, publicType: string, text: string) {
     let query = Event.query()
 
-    if (eventType) {
-      query = query.where('eventType', eventType)
+    if (publicType && eventType) {
+      query = query.where('eventType', eventType).andWhere('publicType', publicType)
     }
 
-    if (publicType) {
-      query = query.where('publicType', publicType)
-    }
+    // if (eventType) {
+    //   query = query.where('eventType', eventType)
+    // }
 
     if (text) {
       query = query.where((builder) => {
-        builder.where('title', 'LIKE', `%${text}%`).orWhere('description', 'LIKE', `%${text}%`)
+        builder.where('slug', 'LIKE', `%${text}%`)
       })
     }
 
