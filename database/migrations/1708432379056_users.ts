@@ -10,7 +10,7 @@ export default class extends BaseSchema {
       table.string('name').notNullable()
       table.string('email').notNullable().unique()
       table.string('password').notNullable()
-      table.enum('profile', ['student', 'parent', 'adm', 'professor']).notNullable()
+      table.enum('profile', ['student', 'parent', 'adm', 'professor'] as const).notNullable()
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
     })

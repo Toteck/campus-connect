@@ -10,7 +10,7 @@ export default class Course extends BaseModel {
   public name: string
 
   @column()
-  public degree: 'médio técnico' | 'proeja' | 'subsequente' | 'superior'
+  public degree: 'médio_técnico' | 'proeja' | 'subsequente' | 'superior'
 
   @hasMany(() => Class)
   public classes: HasMany<typeof Class>

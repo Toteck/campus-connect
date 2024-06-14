@@ -1,0 +1,16 @@
+import BaseSeeder from '@ioc:Adonis/Lucid/Seeder'
+import Class from 'App/Models/Class'
+
+export default class extends BaseSeeder {
+  public async run() {
+    await Class.createMany([
+      {
+        name: '2022.2',
+        year: '2022',
+        period: '2',
+        shift: 'matutino',
+        courseId: 1,
+      },
+    ])
+  }
+}

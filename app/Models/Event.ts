@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { DateTime } from 'luxon'
 import { BaseModel, ManyToMany, column, manyToMany } from '@ioc:Adonis/Lucid/Orm'
 import { slugify } from '@ioc:Adonis/Addons/LucidSlugify'
@@ -30,9 +31,14 @@ export default class Event extends BaseModel {
   public thumbnail: string | null
 
   @manyToMany(() => User, {
-    pivotTable: 'users_events',
+    pivotTable: 'author_posts',
   })
-  public server_adm: ManyToMany<typeof User>
+  public author: ManyToMany<typeof User>
+
+  @manyToMany(() => User, {
+    pivotTable: 'user_favorites',
+  })
+  public usersLiked: ManyToMany<typeof User>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

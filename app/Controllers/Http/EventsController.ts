@@ -49,8 +49,10 @@ export default class EventsController {
 
   public async index({ request, response }: HttpContextContract) {
     const { qs, ['eventType']: eventType, ['publicType']: publicType } = request.qs()
-
-    const text = slug(qs)
+    let text
+    if (qs) {
+      text = slug(qs)
+    }
 
     const page = request.input('page', 1)
     const limit = request.input('limit', 10)

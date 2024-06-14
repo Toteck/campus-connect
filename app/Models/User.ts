@@ -32,9 +32,14 @@ export default class User extends BaseModel {
   public classes: ManyToMany<typeof Class>
 
   @manyToMany(() => Event, {
-    pivotTable: 'users_events',
+    pivotTable: 'author_posts',
   })
   public events: ManyToMany<typeof Event>
+
+  @manyToMany(() => Event, {
+    pivotTable: 'user_favorites',
+  })
+  public favorites: ManyToMany<typeof Event>
 
   @beforeSave()
   public static async hashPassword(user: User) {

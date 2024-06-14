@@ -8,7 +8,9 @@ export default class extends BaseSchema {
       table.increments('id')
 
       table.string('name', 255).notNullable()
-      table.enum('degree', ['médio técnico', 'proeja', 'subsequente', 'superior']).notNullable()
+      table
+        .enum('degree', ['médio_técnico', 'proeja', 'subsequente', 'superior'] as const)
+        .notNullable()
 
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
