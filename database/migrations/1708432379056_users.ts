@@ -11,6 +11,14 @@ export default class extends BaseSchema {
       table.string('email').notNullable().unique()
       table.string('password').notNullable()
       table.enum('profile', ['student', 'parent', 'adm', 'professor'] as const).notNullable()
+      table
+        .integer('class_id')
+        .unsigned()
+        .references('id')
+        .inTable('classes')
+        .nullable()
+        .onDelete('CASCADE')
+
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
     })

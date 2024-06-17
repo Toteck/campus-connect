@@ -33,4 +33,5 @@ Route.group(() => {
   Route.delete('/events/:id', 'EventsController.destroy')
 
   Route.get('categories', 'CategoriesController.index')
+  Route.get('my-events', 'MyEventsController.index')
 }).middleware(['auth', 'acl:student,adm,parent,professor'])

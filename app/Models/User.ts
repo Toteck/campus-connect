@@ -1,5 +1,15 @@
 import { DateTime } from 'luxon'
-import { BaseModel, ManyToMany, beforeSave, column, manyToMany } from '@ioc:Adonis/Lucid/Orm'
+import {
+  BaseModel,
+  BelongsTo,
+  HasMany,
+  ManyToMany,
+  beforeSave,
+  belongsTo,
+  column,
+  hasMany,
+  manyToMany,
+} from '@ioc:Adonis/Lucid/Orm'
 import Hash from '@ioc:Adonis/Core/Hash'
 import Class from './Class'
 import Event from './Event'
@@ -20,26 +30,25 @@ export default class User extends BaseModel {
   @column()
   public profile: 'student' | 'parent' | 'adm' | 'professor'
 
-  @column.dateTime({ autoCreate: true })
-  public createdAt: DateTime
+  @column()
+  public classId: number
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
-  public updatedAt: DateTime
+  @belongsTo(() => Class)
+  public classe: BelongsTo<typeof Class>
 
-  @manyToMany(() => Class, {
-    pivotTable: 'users_classes',
-  })
-  public classes: ManyToMany<typeof Class>
-
-  @manyToMany(() => Event, {
-    pivotTable: 'author_posts',
-  })
-  public events: ManyToMany<typeof Event>
+  @hasMany(() => Event)
+  public events: HasMany<typeof Event>
 
   @manyToMany(() => Event, {
     pivotTable: 'user_favorites',
   })
   public favorites: ManyToMany<typeof Event>
+
+  @column.dateTime({ autoCreate: true })
+  public createdAt: DateTime
+
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  public updatedAt: DateTime
 
   @beforeSave()
   public static async hashPassword(user: User) {

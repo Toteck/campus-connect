@@ -1,8 +1,17 @@
 /* eslint-disable prettier/prettier */
 import { DateTime } from 'luxon'
-import { BaseModel, ManyToMany, column, manyToMany } from '@ioc:Adonis/Lucid/Orm'
+import {
+  BaseModel,
+  BelongsTo,
+  ManyToMany,
+  belongsTo,
+  column,
+  manyToMany,
+} from '@ioc:Adonis/Lucid/Orm'
 import { slugify } from '@ioc:Adonis/Addons/LucidSlugify'
 import User from './User'
+import Course from './Course'
+import Class from './Class'
 
 export default class Event extends BaseModel {
   @column({ isPrimary: true })
@@ -30,10 +39,27 @@ export default class Event extends BaseModel {
   @column()
   public thumbnail: string | null
 
-  @manyToMany(() => User, {
-    pivotTable: 'author_posts',
+  @column()
+  public userId: number
+
+  @column()
+  public cursoId: number
+
+  @column()
+  public turmaId: number
+
+  @belongsTo(() => User)
+  public author: BelongsTo<typeof User>
+
+  @belongsTo(() => Course, {
+    foreignKey: 'cursoId',
   })
-  public author: ManyToMany<typeof User>
+  public curso: BelongsTo<typeof Course>
+
+  @belongsTo(() => Class, {
+    foreignKey: 'turmaId',
+  })
+  public turma: BelongsTo<typeof Class>
 
   @manyToMany(() => User, {
     pivotTable: 'user_favorites',
