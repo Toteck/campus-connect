@@ -38,7 +38,15 @@ export default class FavoritesController {
 
   public async destroy({ request, response, auth }: HttpContextContract) {
     try {
-      const { id } = request.param('id')
-    } catch (error) {}
+      const id = request.param('id')
+      console.log(id)
+      await auth.user?.related('favorites').detach([id])
+      await auth.user!.save()
+      await auth.user!.refresh()
+
+      return response.noContent()
+    } catch (error) {
+      return response.status(400).json({ error: error.message })
+    }
   }
 }

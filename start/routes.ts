@@ -36,4 +36,5 @@ Route.group(() => {
 
   Route.get('favorites', 'FavoritesController.index')
   Route.post('favorites', 'FavoritesController.store')
+  Route.delete('/favorites/:id', 'FavoritesController.destroy')
 }).middleware(['auth', 'acl:student,adm,parent,professor'])
