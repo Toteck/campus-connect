@@ -1,7 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default class FavoritesController {
-  public async index({ request, response, auth }: HttpContextContract) {
+  public async index({ response, auth }: HttpContextContract) {
     try {
       const favorites = await auth.user?.related('favorites').query()
       return response.json(favorites)

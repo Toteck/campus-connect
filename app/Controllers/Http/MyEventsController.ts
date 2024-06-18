@@ -5,7 +5,7 @@ import Event from 'App/Models/Event'
 import Course from 'App/Models/Course'
 
 export default class MyEventsController {
-  public async index({ auth, response }: HttpContextContract) {
+  public async index({ auth, request, response }: HttpContextContract) {
     // Pega o id do usuário autenticado por meio do auth
     const { id } = auth.user!.$attributes
 
@@ -50,6 +50,43 @@ export default class MyEventsController {
       }
     })
 
-    return response.ok({ data })
+    const { profile, classId } = await auth.user!
+    const classStudent = await Class.findOrFail(classId)
+    const cursoId = classStudent.courseId
+
+    const eventsQuery = this.filterMyEvents(profile, classId, cursoId)
+
+    const page = request.input('page', 1)
+    const limit = request.input('limit', 10)
+
+    const eventos = await eventsQuery.paginate(page, limit)
+
+    return response.ok({ eventos })
+  }
+
+  private filterMyEvents(profile: string, classId: number, cursoId: number) {
+    let query
+
+    if (profile && cursoId && classId) {
+      query = Event.query()
+        .where('publicType', profile)
+        .orWhere('cursoId', cursoId)
+        .orWhere('turmaId', classId)
+    } else if (profile && cursoId) {
+      query = Event.query().where('publicType', profile).orWhere('cursoId', cursoId)
+    } else {
+      query = Event.query().where('publicType', profile)
+    }
+    // if (cursoId || classId) {
+    //   query = query
+    //     .where('publicType', classId)
+    //     .orWhere('cursoId', cursoId)
+    //     .orWhere('turmaId', classId)
+    // }
+    // } else if (cursoId) {
+    //   query = query.where('cursoId', cursoId)
+    // }
+
+    return query
   }
 }
