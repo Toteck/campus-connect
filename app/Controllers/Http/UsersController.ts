@@ -8,11 +8,6 @@ export default class UsersController {
 
     const user = await User.create(userPayload)
 
-    // Fazendo o login do usuário criado
-    /**
-     * Problema: Usuário está sendo criado mas está ocorrendo um erro ao realizar o login porque a senha provavelmente está
-     */
-
     const token = await auth.use('api').attempt(userPayload['email']!, userPayload.password, {
       expiresIn: '7days',
     })

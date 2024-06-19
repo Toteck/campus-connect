@@ -44,12 +44,6 @@ export default class MyEventsController {
       events = await Event.query().where('publicType', user.profile)
     }
 
-    const data = events.map((event) => {
-      return {
-        event,
-      }
-    })
-
     const { profile, classId } = await auth.user!
     const classStudent = await Class.findOrFail(classId)
     const cursoId = classStudent.courseId
