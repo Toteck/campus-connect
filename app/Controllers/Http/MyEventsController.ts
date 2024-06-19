@@ -28,21 +28,19 @@ export default class MyEventsController {
     await evento.load('curso')
     await evento.load('turma')
 
-    await Event.query()
+    // // Se o usuário for um estudante então pesquisamos a turma a que ele pertence
 
-    // Se o usuário for um estudante então pesquisamos a turma a que ele pertence
+    // let events
+    // if (user.profile === 'student') {
+    //   const turmaStudent = await user.related('classe').query().firstOrFail()
 
-    let events
-    if (user.profile === 'student') {
-      const turmaStudent = await user.related('classe').query().firstOrFail()
-
-      events = await Event.query()
-        .where('publicType', user.profile)
-        .andWhere('cursoId', turmaStudent.courseId)
-        .andWhere('turmaId', turmaStudent.id)
-    } else {
-      events = await Event.query().where('publicType', user.profile)
-    }
+    //   events = await Event.query()
+    //     .where('publicType', user.profile)
+    //     .andWhere('cursoId', turmaStudent.courseId)
+    //     .andWhere('turmaId', turmaStudent.id)
+    // } else {
+    //   events = await Event.query().where('publicType', user.profile)
+    // }
 
     const { profile, classId } = await auth.user!
     const classStudent = await Class.findOrFail(classId)

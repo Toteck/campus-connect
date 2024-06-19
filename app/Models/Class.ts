@@ -9,6 +9,7 @@ import {
 } from '@ioc:Adonis/Lucid/Orm'
 import Course from './Course'
 import User from './User'
+import { slugify } from '@ioc:Adonis/Addons/LucidSlugify'
 
 export default class Class extends BaseModel {
   @column({ isPrimary: true })
@@ -18,13 +19,11 @@ export default class Class extends BaseModel {
   public name: string
 
   @column()
-  public year: string
-
-  @column()
-  public period: string
-
-  @column()
-  public shift: string
+  @slugify({
+    strategy: 'dbIncrement',
+    fields: ['name'],
+  })
+  public slug: string
 
   @column({ columnName: 'course_id' })
   public courseId: number
@@ -32,7 +31,7 @@ export default class Class extends BaseModel {
   @belongsTo(() => Course, {
     foreignKey: 'courseId',
   })
-  public courseClass: BelongsTo<typeof Course>
+  public course: BelongsTo<typeof Course>
 
   @manyToMany(() => User, {
     pivotTable: 'users_classes',

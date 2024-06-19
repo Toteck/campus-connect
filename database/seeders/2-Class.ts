@@ -6,10 +6,11 @@ export default class extends BaseSeeder {
     await Class.createMany([
       {
         name: '2022.2',
-        year: '2022',
-        period: '2',
-        shift: 'matutino',
-        courseId: 1,
+        courseId: 4,
+      },
+      {
+        name: '2023.1',
+        courseId: 4,
       },
     ])
   }

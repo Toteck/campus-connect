@@ -8,9 +8,7 @@ export default class extends BaseSchema {
       table.increments('id')
 
       table.string('name', 255).notNullable()
-      table
-        .enum('degree', ['médio_técnico', 'proeja', 'subsequente', 'superior'] as const)
-        .notNullable()
+      table.string('slug').notNullable()
 
       table
         .integer('modalidade_id')

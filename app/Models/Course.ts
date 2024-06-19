@@ -1,6 +1,8 @@
 import { DateTime } from 'luxon'
 import { BaseModel, BelongsTo, HasMany, belongsTo, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import Class from './Class'
+import Modalidade from './Modalidade'
+import { slugify } from '@ioc:Adonis/Addons/LucidSlugify'
 
 export default class Course extends BaseModel {
   @column({ isPrimary: true })
@@ -10,13 +12,22 @@ export default class Course extends BaseModel {
   public name: string
 
   @column()
-  public degree: 'médio_técnico' | 'proeja' | 'subsequente' | 'superior'
+  @slugify({
+    strategy: 'dbIncrement',
+    fields: ['name'],
+  })
+  public slug: string
+
+  @column()
+  public modalidadeId: number
 
   @hasMany(() => Class)
   public classes: HasMany<typeof Class>
 
-  @belongsTo(() => Course)
-  public course: BelongsTo<typeof Course>
+  @belongsTo(() => Modalidade, {
+    foreignKey: 'modalidadeId',
+  })
+  public modalidade: BelongsTo<typeof Modalidade>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
