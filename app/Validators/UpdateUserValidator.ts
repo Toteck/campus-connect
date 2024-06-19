@@ -24,23 +24,16 @@ export default class UpdateUserValidator {
    *    ```
    */
   public schema = schema.create({
-    name: schema.string({}),
-    email: schema.string.optional({}, [rules.email()]),
-    password: schema.string({}, [rules.minLength(8)]),
-    profile: schema.enum(['student', 'parent', 'adm', 'professor'] as const),
-    classId: schema.number(),
+    modalidade: schema.number([rules.exists({ table: 'modalidades', column: 'id' })]),
+    curso: schema.number([rules.exists({ table: 'courses', column: 'id' })]),
+    turma: schema.number([rules.exists({ table: 'classes', column: 'id' })]),
+    name: schema.string.optional({ trim: true }),
+    // outros campos que você deseja validar
   })
 
-  /**
-   * Custom messages for validation failures. You can make use of dot notation `(.)`
-   * for targeting nested fields and array expressions `(*)` for targeting all
-   * children of an array. For example:
-   *
-   * {
-   *   'profile.username.required': 'Username is required',
-   *   'scores.*.number': 'Define scores as valid numbers'
-   * }
-   *
-   */
-  public messages: CustomMessages = {}
+  public messages: CustomMessages = {
+    'modalidade.exists': 'Modalidade não encontrada',
+    'curso.exists': 'Curso não encontrado',
+    'turma.exists': 'Turma não encontrada',
+  }
 }

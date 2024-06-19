@@ -1,6 +1,12 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import BadRequestException from 'App/Exceptions/BadRequestException'
+import Class from 'App/Models/Class'
+import Course from 'App/Models/Course'
+import Modalidade from 'App/Models/Modalidade'
 import User from 'App/Models/User'
 import CreateUserValidator from 'App/Validators/CreateUserValidator'
+import UpdateUser from 'App/Validators/UpdateUserValidator'
+import slug from 'slug'
 
 export default class UsersController {
   public async store({ response, request, auth }: HttpContextContract) {
@@ -13,5 +19,35 @@ export default class UsersController {
     })
 
     return response.created({ user, token })
+  }
+
+  public async update({ response, request, auth }: HttpContextContract) {
+    try {
+      const userId = auth.user!.id // Assumindo que o usuário está autenticado
+      const userNewData = await request.validate(UpdateUser)
+
+      // Validar se o curso pertence à modalidade
+      const turma = await Class.query()
+        .where('id', userNewData.turma)
+        .andWhere('courseId', userNewData.curso)
+        .firstOrFail()
+
+      const user = await User.findOrFail(userId)
+      user.classId = turma.id
+
+      // Atualizar outros campos se necessário
+      if (userNewData.name) user.name = userNewData.name
+      // Continue atualizando outros campos conforme necessário...
+
+      await user.save()
+
+      return response.ok({ user })
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        return response.badRequest(error.message)
+      }
+
+      return response.status(400).json({ error: error.message })
+    }
   }
 }
