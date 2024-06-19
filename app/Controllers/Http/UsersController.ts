@@ -1,12 +1,10 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import BadRequestException from 'App/Exceptions/BadRequestException'
 import Class from 'App/Models/Class'
-import Course from 'App/Models/Course'
-import Modalidade from 'App/Models/Modalidade'
+
 import User from 'App/Models/User'
 import CreateUserValidator from 'App/Validators/CreateUserValidator'
 import UpdateUser from 'App/Validators/UpdateUserValidator'
-import slug from 'slug'
 
 export default class UsersController {
   public async store({ response, request, auth }: HttpContextContract) {
