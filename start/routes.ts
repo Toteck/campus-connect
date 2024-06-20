@@ -8,6 +8,7 @@ Route.post('/user', 'UsersController.store')
 
 Route.group(() => {
   Route.put('user', 'UsersController.update')
+  Route.get('user', 'UsersController.show')
 
   // Session
   Route.delete('/sessions', 'SessionsController.destroy')

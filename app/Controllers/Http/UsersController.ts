@@ -48,4 +48,19 @@ export default class UsersController {
       return response.status(400).json({ error: error.message })
     }
   }
+
+  public async show({ response, auth }: HttpContextContract) {
+    const user = await auth.user
+    //const classe = await user?.load('classe')
+
+    await user?.load((loader) => {
+      loader.load('classe', (classeLoader) => {
+        classeLoader.preload('course', (courseLoader) => {
+          courseLoader.preload('modalidade')
+        })
+      })
+    })
+
+    return response.ok({ user })
+  }
 }
