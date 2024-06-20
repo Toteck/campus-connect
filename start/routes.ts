@@ -10,6 +10,10 @@ Route.group(() => {
   Route.put('user', 'UsersController.update')
   Route.get('user', 'UsersController.show')
 
+  Route.get('modalidades', 'ModalidadesController.index')
+  Route.get('modalidades/:id/cursos', 'ModalidadesController.cursosByModalidade')
+  Route.get('cursos/:id/turmas', 'CoursesController.turmasByCurso')
+
   // Session
   Route.delete('/sessions', 'SessionsController.destroy')
 

@@ -1,5 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import BadRequestException from 'App/Exceptions/BadRequestException'
+import Class from 'App/Models/Class'
 import Course from 'App/Models/Course'
 import CreateCourseValidator from 'App/Validators/CreateCourseValidator'
 
@@ -87,6 +88,13 @@ export default class CoursesController {
     await course.load('classes')
 
     return response.ok({ classes: course.classes })
+  }
+
+  public async turmasByCurso({ params, response }: HttpContextContract) {
+    const courseId = params.id
+    const turmas = await Class.query().where('courseId', courseId)
+
+    return response.ok({ turmas })
   }
 
   private all() {
