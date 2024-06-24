@@ -7,10 +7,12 @@ export default class CreateEventValidator {
   public schema = schema.create({
     title: schema.string({ trim: true }),
     description: schema.string({ trim: true }),
-    date: schema.date({}),
-    category: schema.enum(['notícia', 'edital', 'evento', 'reunião'] as const),
-    thumbnail: schema.string.optional(),
-    anexo: schema.array().members(schema.string()),
+    eventType: schema.enum(['notícia', 'edital', 'evento', 'reunião', 'aviso'] as const),
+    publicType: schema.enum(['student', 'professor', 'parent', 'general'] as const),
+    file: schema.file.optional({
+      size: '5mb',
+      extnames: ['jpg', 'png', 'jpeg'],
+    }),
   })
 
   public messages: CustomMessages = {

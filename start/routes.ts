@@ -7,6 +7,15 @@ Route.post('/sessions', 'SessionsController.store') // Login
 Route.post('/user', 'UsersController.store')
 
 Route.group(() => {
+  Route.get(':file', 'UploadsController.show').as('getFile').as('files').prefix('uploads')
+
+  Route.group(() => {
+    Route.put('thumbnail', 'ThumbnailsController.update').as('setThumbnailEvent')
+
+    Route.get('anexos', 'AnexosControllers.index').as('getAnexos')
+    Route.post('anexos', 'AnexosControllers.store').as('saveAnexos')
+  }).prefix('events')
+
   Route.put('user', 'UsersController.update')
   Route.get('user', 'UsersController.show')
 

@@ -14,9 +14,11 @@ export default class extends BaseSchema {
       table
         .enum('event_type', ['notícia', 'edital', 'evento', 'reunião', 'aviso'] as const)
         .notNullable()
+        .defaultTo('evento')
       table
         .enum('public_type', ['student', 'professor', 'parent', 'general', ''] as const)
         .notNullable()
+        .defaultTo('general')
       table.string('thumbnail').nullable()
       table
         .integer('curso_id')

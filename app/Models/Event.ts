@@ -3,15 +3,18 @@ import { DateTime } from 'luxon'
 import {
   BaseModel,
   BelongsTo,
+  HasOne,
   ManyToMany,
   belongsTo,
   column,
+  hasOne,
   manyToMany,
 } from '@ioc:Adonis/Lucid/Orm'
 import { slugify } from '@ioc:Adonis/Addons/LucidSlugify'
 import User from './User'
 import Course from './Course'
 import Class from './Class'
+import File from './File'
 
 export default class Event extends BaseModel {
   @column({ isPrimary: true })
@@ -37,9 +40,6 @@ export default class Event extends BaseModel {
   public publicType: 'student' | 'professor' | 'parent' | 'general'
 
   @column()
-  public thumbnail: string | null
-
-  @column()
   public userId: number
 
   @column()
@@ -47,6 +47,12 @@ export default class Event extends BaseModel {
 
   @column()
   public turmaId: number
+
+  @hasOne(() => File, {
+    foreignKey: 'ownerId',
+    onQuery: (query) => query.where({ fileCategory: 'thumbnail' }),
+  })
+  public thumbnail: HasOne<typeof File>
 
   @belongsTo(() => User)
   public author: BelongsTo<typeof User>

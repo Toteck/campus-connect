@@ -1,24 +1,84 @@
 /* eslint-disable prettier/prettier */
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import CreateEventValidator from 'App/Validators/CreateEventValidator'
+import { cuid } from '@ioc:Adonis/Core/Helpers'
 import Event from 'App/Models/Event'
 import BadRequestException from 'App/Exceptions/BadRequestException'
 import slug from 'slug'
+import Database from '@ioc:Adonis/Lucid/Database'
+import sharp from 'sharp'
+import { ISaveFileDTO } from 'Contracts/interfaces/IStorageProvider'
+import StorageProvider from '@ioc:CampusConnect/StorageProvider'
 
 export default class EventsController {
   public async store({ response, request }: HttpContextContract) {
-    const eventPayload = await request.validate(CreateEventValidator)
+    try {
+      const response = await Database.transaction(async (trx) => {
+        const { title, description, eventType, publicType, file } =
+          await request.validate(CreateEventValidator)
 
-    // Busco no banco de dados se já existe um evento com esse título
-    const eventByTitle = await Event.findBy('title', eventPayload.title)
+        // Busco no banco de dados se já existe um evento com esse título
+        const eventByTitle = await Event.findBy('title', title)
 
-    if (eventByTitle) {
-      throw new BadRequestException('Title is already being used by another event', 409)
+        if (eventByTitle) {
+          throw new BadRequestException('Title is already being used by another event', 409)
+        }
+
+        const event = await Event.create({ title, description, eventType, publicType })
+
+        /**
+         * Atualiza ou cria uma nova capa com um nome
+         * gerado aleatoriamente
+         */
+        event.useTransaction(trx)
+
+        const thumbnail = await event.related('thumbnail').updateOrCreate(
+          {},
+          {
+            fileCategory: 'thumbnail',
+            fileName: `${cuid()}.${file?.extname}`,
+          }
+        )
+
+        // Redimensiona a imagem usando biblioteca sharp
+        const fileBuffer = await sharp(file?.tmpPath)
+          .resize(1080, 1080, {
+            fit: 'cover',
+            position: 'center',
+          })
+          .toBuffer()
+
+        const fileSave: ISaveFileDTO = {
+          fileBuffer,
+          fileName: thumbnail.fileName,
+          fileType: file?.type,
+          fileSubType: file?.subtype,
+          isPublic: true,
+        }
+
+        console.log('Uma linha antes de salvar')
+        // Salva o arquivo usando o StorageProvider
+        await StorageProvider.saveFile(fileSave)
+
+        return thumbnail
+      })
+      return response.serialize({
+        fields: { pick: ['url'] },
+      })
+    } catch (error) {
+      return response.status(400).json({ error: error.message })
     }
 
-    const event = await Event.create(eventPayload)
+    // Busco no banco de dados se já existe um evento com esse título
+    // const eventByTitle = await Event.findBy('title', eventPayload.title)
 
-    return response.created({ event })
+    // if (eventByTitle) {
+    //   throw new BadRequestException('Title is already being used by another event', 409)
+    // }
+
+    // const event = await Event.create(eventPayload)
+
+    // return response.created({ event })
   }
 
   public async update({ request, response }: HttpContextContract) {

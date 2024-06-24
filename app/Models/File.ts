@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column, computed } from '@ioc:Adonis/Lucid/Orm'
-import { FileCategory } from 'App/Utils/fileCategory'
+import { FileCategory } from 'App/Utils/fileCategories'
 import uploadConfig from 'Config/upload'
 import StorageProvider from '@ioc:CampusConnect/StorageProvider'
 
