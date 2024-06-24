@@ -3,7 +3,7 @@ import Course from 'App/Models/Course'
 import Modalidade from 'App/Models/Modalidade'
 
 export default class ModalidadesController {
-  public async index({ response, auth }: HttpContextContract) {
+  public async index({ response }: HttpContextContract) {
     const modalidades = await Modalidade.query()
 
     return response.ok({ modalidades })
