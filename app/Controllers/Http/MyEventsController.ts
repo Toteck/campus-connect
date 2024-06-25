@@ -69,15 +69,6 @@ export default class MyEventsController {
     } else {
       query = Event.query().where('publicType', profile)
     }
-    // if (cursoId || classId) {
-    //   query = query
-    //     .where('publicType', classId)
-    //     .orWhere('cursoId', cursoId)
-    //     .orWhere('turmaId', classId)
-    // }
-    // } else if (cursoId) {
-    //   query = query.where('cursoId', cursoId)
-    // }
 
     return query
   }

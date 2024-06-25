@@ -50,7 +50,7 @@ export default class UsersController {
   }
 
   public async show({ response, auth }: HttpContextContract) {
-    const user = await auth.user
+    const user = await auth.authenticate()
     //const classe = await user?.load('classe')
 
     await user?.load((loader) => {

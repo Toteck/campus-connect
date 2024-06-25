@@ -99,8 +99,6 @@ export default class EventsController {
 
             await StorageProvider.saveFile(anexoFileSave)
           }
-
-          event.load('anexos')
         }
         return event
       })
@@ -161,6 +159,11 @@ export default class EventsController {
     const event = await Event.findOrFail(id)
     await event.load('thumbnail')
     await event.load('anexos')
+    await event.load((loader) => {
+      loader.load('anexos', (anexoLoader) => {
+        anexoLoader.preload('file')
+      })
+    })
     return response.ok({ event })
   }
 
