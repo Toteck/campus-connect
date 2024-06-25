@@ -11,7 +11,7 @@ import { ISaveFileDTO } from 'Contracts/interfaces/IStorageProvider'
 import StorageProvider from '@ioc:CampusConnect/StorageProvider'
 
 export default class EventsController {
-  public async store({ response, request }: HttpContextContract) {
+  public async store({ response, request, auth }: HttpContextContract) {
     try {
       const response = await Database.transaction(async (trx) => {
         const { title, description, eventType, publicType, file } =
@@ -24,13 +24,19 @@ export default class EventsController {
           throw new BadRequestException('Title is already being used by another event', 409)
         }
 
-        const event = await Event.create({ title, description, eventType, publicType })
+        const user = await auth.authenticate()
+        const userId = user.id
+
+        const event = new Event()
+        event.useTransaction(trx)
+
+        event.merge({ title, description, eventType, publicType, userId })
+        await event.save()
 
         /**
          * Atualiza ou cria uma nova capa com um nome
          * gerado aleatoriamente
          */
-        event.useTransaction(trx)
 
         const thumbnail = await event.related('thumbnail').updateOrCreate(
           {},
@@ -56,7 +62,6 @@ export default class EventsController {
           isPublic: true,
         }
 
-        console.log('Uma linha antes de salvar')
         // Salva o arquivo usando o StorageProvider
         await StorageProvider.saveFile(fileSave)
 
