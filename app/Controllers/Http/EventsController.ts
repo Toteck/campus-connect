@@ -125,12 +125,17 @@ export default class EventsController {
     const eventsQuery = this.filterByQueryString(eventType, publicType, text) // Quando pegamos esse resultado sem o await está sendo retornado uma query de busca
     const events = await eventsQuery.paginate(page, limit)
 
+    events.map(async (event) => {
+      await event.load('thumbnail')
+    })
+
     return response.ok({ events })
   }
 
   public async show({ request, response }: HttpContextContract) {
     const id = request.param('id')
     const event = await Event.findOrFail(id)
+    await event.load('thumbnail')
     return response.ok({ event })
   }
 
