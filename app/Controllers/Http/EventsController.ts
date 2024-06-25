@@ -9,13 +9,17 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import sharp from 'sharp'
 import { ISaveFileDTO } from 'Contracts/interfaces/IStorageProvider'
 import StorageProvider from '@ioc:CampusConnect/StorageProvider'
+import Anexo from 'App/Models/Anexo'
+import { StoreValidator as AnexoStoreValidator } from 'App/Validators/Anexo/StoreValidator'
+import fs from 'fs'
 
 export default class EventsController {
   public async store({ response, request, auth }: HttpContextContract) {
     try {
       const response = await Database.transaction(async (trx) => {
-        const { title, description, eventType, publicType, file } =
+        const { title, description, eventType, publicType, file, anexos } =
           await request.validate(CreateEventValidator)
+        console.log({ anexos })
 
         // Busco no banco de dados se já existe um evento com esse título
         const eventByTitle = await Event.findBy('title', title)
@@ -67,23 +71,43 @@ export default class EventsController {
 
         await event.load('thumbnail')
 
+        // Salvar os anexos
+        if (anexos && anexos.length > 0) {
+          for (const anexoFile of anexos) {
+            const anexo = new Anexo()
+            anexo.useTransaction(trx)
+
+            const name = slug(anexoFile.clientName)
+
+            anexo.merge({ name: name, eventId: event.id })
+            await anexo.save()
+
+            const anexoFileRecord = await anexo.related('file').create({
+              fileCategory: 'anexo',
+              fileName: `${cuid()}.${anexoFile.extname}`,
+            })
+
+            const anexoFileBuffer = await fs.promises.readFile(anexoFile.tmpPath || '')
+
+            const anexoFileSave: ISaveFileDTO = {
+              fileBuffer: anexoFileBuffer,
+              fileName: anexoFileRecord.fileName,
+              fileType: anexoFile.type,
+              fileSubType: anexoFile.subtype,
+              isPublic: true,
+            }
+
+            await StorageProvider.saveFile(anexoFileSave)
+          }
+
+          event.load('anexos')
+        }
         return event
       })
       return response
     } catch (error) {
       return response.status(400).json({ error: error.message })
     }
-
-    // Busco no banco de dados se já existe um evento com esse título
-    // const eventByTitle = await Event.findBy('title', eventPayload.title)
-
-    // if (eventByTitle) {
-    //   throw new BadRequestException('Title is already being used by another event', 409)
-    // }
-
-    // const event = await Event.create(eventPayload)
-
-    // return response.created({ event })
   }
 
   public async update({ request, response }: HttpContextContract) {
@@ -136,6 +160,7 @@ export default class EventsController {
     const id = request.param('id')
     const event = await Event.findOrFail(id)
     await event.load('thumbnail')
+    await event.load('anexos')
     return response.ok({ event })
   }
 

@@ -5,8 +5,10 @@ import {
   BelongsTo,
   HasOne,
   ManyToMany,
+  HasMany,
   belongsTo,
   column,
+  hasMany,
   hasOne,
   manyToMany,
 } from '@ioc:Adonis/Lucid/Orm'
@@ -15,6 +17,7 @@ import User from './User'
 import Course from './Course'
 import Class from './Class'
 import File from './File'
+import Anexo from './Anexo'
 
 export default class Event extends BaseModel {
   @column({ isPrimary: true })
@@ -53,6 +56,11 @@ export default class Event extends BaseModel {
     onQuery: (query) => query.where({ fileCategory: 'thumbnail' }),
   })
   public thumbnail: HasOne<typeof File>
+
+  @hasMany(() => Anexo, {
+    foreignKey: 'eventId',
+  })
+  public anexos: HasMany<typeof Anexo>
 
   @belongsTo(() => User)
   public author: BelongsTo<typeof User>

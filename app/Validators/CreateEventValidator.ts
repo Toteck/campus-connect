@@ -13,6 +13,12 @@ export default class CreateEventValidator {
       size: '5mb',
       extnames: ['jpg', 'png', 'jpeg'],
     }),
+    anexos: schema.array().members(
+      schema.file({
+        size: '10mb',
+        extnames: ['pdf'],
+      })
+    ),
   })
 
   public messages: CustomMessages = {
