@@ -65,11 +65,11 @@ export default class EventsController {
         // Salva o arquivo usando o StorageProvider
         await StorageProvider.saveFile(fileSave)
 
-        return thumbnail
+        await event.load('thumbnail')
+
+        return event
       })
-      return response.serialize({
-        fields: { pick: ['url'] },
-      })
+      return response
     } catch (error) {
       return response.status(400).json({ error: error.message })
     }
