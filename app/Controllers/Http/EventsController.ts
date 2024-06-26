@@ -99,6 +99,7 @@ export default class EventsController {
 
             await StorageProvider.saveFile(anexoFileSave)
           }
+          await event.load('anexos')
         }
         return event
       })
