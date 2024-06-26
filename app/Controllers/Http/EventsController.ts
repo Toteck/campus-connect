@@ -10,7 +10,6 @@ import sharp from 'sharp'
 import { ISaveFileDTO } from 'Contracts/interfaces/IStorageProvider'
 import StorageProvider from '@ioc:CampusConnect/StorageProvider'
 import Anexo from 'App/Models/Anexo'
-import { StoreValidator as AnexoStoreValidator } from 'App/Validators/Anexo/StoreValidator'
 import fs from 'fs'
 
 export default class EventsController {

@@ -7,15 +7,6 @@ Route.post('/sessions', 'SessionsController.store') // Login
 Route.post('/user', 'UsersController.store')
 
 Route.group(() => {
-  Route.get(':file', 'UploadsController.show').as('getFile').as('files').prefix('uploads')
-
-  Route.group(() => {
-    Route.put('thumbnail', 'ThumbnailsController.update').as('setThumbnailEvent')
-
-    Route.get('anexos', 'AnexosControllers.index').as('getAnexos')
-    Route.post('anexos', 'AnexosControllers.store').as('saveAnexos')
-  }).prefix('events')
-
   Route.put('user', 'UsersController.update')
   Route.get('user', 'UsersController.show')
 
@@ -40,13 +31,6 @@ Route.group(() => {
   Route.get('/classes/:id', 'ClassesController.show')
   Route.get('/classes', 'ClassesController.index')
 
-  // Events
-  Route.post('/events', 'EventsController.store')
-  Route.put('/events/:id', 'EventsController.update')
-  Route.get('/events', 'EventsController.index')
-  Route.get('/events/:id', 'EventsController.show')
-  Route.delete('/events/:id', 'EventsController.destroy')
-
   Route.get('categories', 'CategoriesController.index')
   Route.get('my-events', 'MyEventsController.index')
 
@@ -54,3 +38,12 @@ Route.group(() => {
   Route.post('favorites', 'FavoritesController.store')
   Route.delete('/favorites/:id', 'FavoritesController.destroy')
 }).middleware(['auth', 'acl:student,adm,parent,professor'])
+
+Route.group(() => {
+  // Events
+  Route.post('/events', 'EventsController.store')
+  Route.put('/events/:id', 'EventsController.update')
+  Route.get('/events', 'EventsController.index')
+  Route.get('/events/:id', 'EventsController.show')
+  Route.delete('/events/:id', 'EventsController.destroy')
+}).middleware(['auth', 'acl:adm'])
