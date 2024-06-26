@@ -10,7 +10,7 @@ export default class extends BaseSchema {
       table.string('name').notNullable()
       table.string('email').notNullable().unique()
       table.string('password').notNullable()
-      table.enum('profile', ['student', 'parent', 'adm', 'professor'] as const).notNullable()
+      table.enum('profile', ['student', 'pais', 'adm', 'professor'] as const).notNullable()
       table
         .integer('class_id')
         .unsigned()

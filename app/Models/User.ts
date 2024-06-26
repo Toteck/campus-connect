@@ -28,7 +28,7 @@ export default class User extends BaseModel {
   public password: string
 
   @column()
-  public profile: 'student' | 'parent' | 'adm' | 'professor'
+  public profile: 'estudante' | 'pais' | 'adm' | 'professor'
 
   @column()
   public classId: number
