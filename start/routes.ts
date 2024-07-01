@@ -36,6 +36,10 @@ Route.group(() => {
 }).middleware(['auth', 'acl:student,adm,parent,professor'])
 
 Route.group(() => {
+  // Modalidades
+  Route.post('modalidades', 'ModalidadesController.store')
+  Route.put('modalidades/:id', 'ModalidadesController.update')
+  Route.delete('modalidades/:id', 'ModalidadesController.destroy')
   // Course
   Route.post('/courses', 'CoursesController.store')
   Route.put('/courses/:id', 'CoursesController.update')
