@@ -27,7 +27,7 @@ export default class CreateUserValidator {
     name: schema.string({}),
     email: schema.string.optional({}, [rules.email()]),
     password: schema.string({}, [rules.minLength(8)]),
-    profile: schema.enum(['student', 'parent', 'adm', 'professor'] as const),
+    profile: schema.enum(['estudante', 'pais', 'adm', 'professor'] as const),
   })
 
   /**s
