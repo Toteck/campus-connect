@@ -1,7 +1,8 @@
+/* eslint-disable prettier/prettier */
 import { schema, CustomMessages } from '@ioc:Adonis/Core/Validator'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
-export default class CreateCourseValidator {
+export class UpdateValidator {
   constructor(protected ctx: HttpContextContract) {}
 
   /*

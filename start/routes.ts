@@ -18,8 +18,8 @@ Route.group(() => {
   Route.delete('/sessions', 'SessionsController.destroy')
 
   // Course
-  Route.get('/course/:id', 'CoursesController.show')
-  Route.get('/course', 'CoursesController.index')
+  Route.get('/courses/:id', 'CoursesController.show')
+  Route.get('/courses', 'CoursesController.index')
   //Route.get('/course/:id/classes', 'CoursesController.classesByCourse')
 
   // Classes
@@ -37,9 +37,9 @@ Route.group(() => {
 
 Route.group(() => {
   // Course
-  Route.post('/course', 'CoursesController.store')
-  Route.put('/course/:id', 'CoursesController.update')
-  Route.delete('/course/:id', 'CoursesController.destroy')
+  Route.post('/courses', 'CoursesController.store')
+  Route.put('/courses/:id', 'CoursesController.update')
+  Route.delete('/courses/:id', 'CoursesController.destroy')
 
   // Classe
   Route.post('/classes', 'ClassesController.store')

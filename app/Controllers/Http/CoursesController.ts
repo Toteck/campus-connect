@@ -3,6 +3,8 @@ import BadRequestException from 'App/Exceptions/BadRequestException'
 import Class from 'App/Models/Class'
 import Course from 'App/Models/Course'
 import CreateCourseValidator from 'App/Validators/CreateCourseValidator'
+import { UpdateValidator } from 'App/Validators/Course'
+import slug from 'slug'
 
 export default class CoursesController {
   public async index({ request, response }: HttpContextContract) {
@@ -21,6 +23,7 @@ export default class CoursesController {
     const id = request.param('id')
 
     const course = await Course.findOrFail(id)
+    await course.load('classes')
 
     return response.ok({ course })
   }
@@ -46,7 +49,7 @@ export default class CoursesController {
   public async update({ response, request }: HttpContextContract) {
     const id = request.param('id')
 
-    const payload = request.all()
+    const payload = await request.validate(UpdateValidator)
 
     const curso = await Course.findOrFail(id)
 
@@ -59,7 +62,9 @@ export default class CoursesController {
       throw new BadRequestException('Name is already being used by another course', 409)
     }
 
-    const updatedCourse = await curso.merge(payload).save()
+    const slugCourseName = slug(payload.name)
+
+    const updatedCourse = await curso.merge({ ...payload, slug: slugCourseName }).save()
 
     return response.ok({ course: updatedCourse })
   }
