@@ -18,16 +18,12 @@ Route.group(() => {
   Route.delete('/sessions', 'SessionsController.destroy')
 
   // Course
-  Route.post('/course', 'CoursesController.store')
   Route.get('/course/:id', 'CoursesController.show')
   Route.get('/course', 'CoursesController.index')
-  Route.get('/course/:id/classes', 'CoursesController.classesByCourse')
-  Route.patch('/course/:id', 'CoursesController.update')
-  Route.delete('/course/:id', 'CoursesController.destroy')
+  //Route.get('/course/:id/classes', 'CoursesController.classesByCourse')
 
   // Classes
-  Route.post('/classes', 'ClassesController.store')
-  Route.patch('/classes/:id', 'ClassesController.update')
+
   Route.get('/classes/:id', 'ClassesController.show')
   Route.get('/classes', 'ClassesController.index')
 
@@ -40,6 +36,16 @@ Route.group(() => {
 }).middleware(['auth', 'acl:student,adm,parent,professor'])
 
 Route.group(() => {
+  // Course
+  Route.post('/course', 'CoursesController.store')
+  Route.put('/course/:id', 'CoursesController.update')
+  Route.delete('/course/:id', 'CoursesController.destroy')
+
+  // Classe
+  Route.post('/classes', 'ClassesController.store')
+  Route.put('/classes/:id', 'ClassesController.update')
+  Route.delete('classes/:id', 'ClassesController.destroy')
+
   // Events
   Route.post('/events', 'EventsController.store')
   Route.put('/events/:id', 'EventsController.update')

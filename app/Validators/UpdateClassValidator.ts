@@ -25,9 +25,6 @@ export default class UpdateClassValidator {
    */
   public schema = schema.create({
     name: schema.string.optional(),
-    year: schema.string.optional(),
-    period: schema.string.optional(),
-    shift: schema.string.optional(),
     courseId: schema.number.optional(),
   })
 

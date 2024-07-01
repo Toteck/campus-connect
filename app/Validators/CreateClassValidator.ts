@@ -6,9 +6,6 @@ export default class CreateClassValidator {
 
   public schema = schema.create({
     name: schema.string({}),
-    year: schema.string({}),
-    period: schema.string({}),
-    shift: schema.string({}),
     courseId: schema.number(),
   })
 
