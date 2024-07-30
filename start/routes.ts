@@ -1,6 +1,9 @@
 /* eslint-disable prettier/prettier */
 import Route from '@ioc:Adonis/Core/Route'
 
+Route.get('/', () => {
+  return 'Olá Docker compose'
+})
 // Session
 Route.post('/sessions', 'SessionsController.store') // Login
 // User

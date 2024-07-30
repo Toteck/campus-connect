@@ -2,7 +2,7 @@ import Bouncer from '@ioc:Adonis/Addons/Bouncer'
 import User from 'App/Models/User'
 
 export const { actions } = Bouncer.define('createCourse', (user: User, adm_user: User) => {
-  return user.profile === 'adm'
+  return user.profile === adm_user.profile
 })
 
 /*
